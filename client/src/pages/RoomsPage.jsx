@@ -14,7 +14,7 @@ export default function RoomsPage() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const today = new Date().toISOString().split('T')[0];
-  useEffect(() => { document.title = 'Rooms — Devprayag Dharamshala'; }, []);
+  useEffect(() => { document.title = 'Rooms — Rudraprayag Dharamshala'; }, []);
 
   return (
     <>
