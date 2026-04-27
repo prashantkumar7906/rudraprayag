@@ -8,8 +8,8 @@ export default function Footer() {
 
           {/* Col 1 — Brand */}
           <div>
-            <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.05rem', color: '#1A0A00', marginBottom: '0.2rem' }}>Rudraprayag Dharamshala</div>
-            <div style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.82rem', color: '#E8520A', marginBottom: '0.9rem' }}>रुद्रप्रयाग धर्मशाला</div>
+            <div style={{ fontFamily: 'Playfair Display, serif', fontWeight: 700, fontSize: '1.05rem', color: '#1A0A00', marginBottom: '0.2rem' }}>Hari Om Trust</div>
+            <div style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.82rem', color: '#E8520A', marginBottom: '0.9rem' }}>चित्रकूट धाम</div>
             <p style={{ fontSize: '0.85rem', color: '#3D2010', lineHeight: 1.75, maxWidth: 240 }}>
               A peaceful pilgrim guest house at the sacred Alaknanda–Mandakini Sangam, Rudraprayag.
             </p>
@@ -56,7 +56,7 @@ export default function Footer() {
         </div>
 
         <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
-          <p style={{ fontSize: '0.78rem', color: '#C4581A', margin: 0 }}>© {new Date().getFullYear()} Rudraprayag Dharamshala Trust. All rights reserved.</p>
+          <p style={{ fontSize: '0.78rem', color: '#C4581A', margin: 0 }}>© {new Date().getFullYear()} Hari Om Trust. All rights reserved.</p>
           <p style={{ fontSize: '0.78rem', color: '#C4581A', margin: 0 }}>Built with ♡ for pilgrims</p>
         </div>
       </div>

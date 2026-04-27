@@ -12,7 +12,7 @@ const CARDS = [
 ];
 
 export default function AboutPage() {
-  useEffect(() => { document.title = 'About — Rudraprayag Dharamshala'; }, []);
+  useEffect(() => { document.title = 'About — Hari Om Trust, Chitrakoot Dham'; }, []);
 
   return (
     <>
@@ -23,7 +23,7 @@ export default function AboutPage() {
             <div className="eyebrow" style={{marginBottom:'0.5rem'}}>About Us</div>
             <h1 style={{fontFamily:'Playfair Display,serif',fontSize:'clamp(1.8rem,3.5vw,2.6rem)',color:'#1A0A00',fontWeight:700,marginBottom:'0.25rem'}}>A place of peace &amp; seva</h1>
             <p style={{fontFamily:'Noto Sans Devanagari,sans-serif',color:'#C4581A',fontSize:'0.95rem',marginBottom:'1.5rem'}}>शांति और सेवा का स्थान</p>
-            <p style={{fontSize:'0.97rem',color:'#3D2010',lineHeight:1.85,maxWidth:620}}>Rudraprayag Dharamshala has served pilgrims at the sacred confluence of the Alaknanda and Mandakini rivers — a gateway to the Char Dham. Run by a charitable trust, our mission is to make the Char Dham Yatra accessible and spiritually enriching for every devotee. Every room includes complimentary sattvic meals, and certified yoga sessions are available daily.</p>
+            <p style={{fontSize:'0.97rem',color:'#3D2010',lineHeight:1.85,maxWidth:620}}>Hari Om Trust runs Chitrakoot Dham — a pilgrim dharamshala at the sacred confluence of the Alaknanda and Mandakini rivers in Rudraprayag, a gateway to the Char Dham. Our mission is to make the Char Dham Yatra accessible and spiritually enriching for every devotee. Every room includes complimentary sattvic meals, and certified yoga sessions are available daily.</p>
           </div>
 
           <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'2.5rem',alignItems:'start'}} className="about-grid">

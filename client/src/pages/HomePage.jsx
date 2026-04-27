@@ -18,7 +18,7 @@ const TRUST = [
 ];
 
 export default function HomePage() {
-  useEffect(() => { document.title = 'Rudraprayag Dharamshala — Sacred Rest at the Sangam'; }, []);
+  useEffect(() => { document.title = 'Hari Om Trust — Chitrakoot Dham, Rudraprayag'; }, []);
 
   return (
     <>
@@ -52,7 +52,7 @@ export default function HomePage() {
 
                 {/* Body */}
                 <p style={{ fontSize: '0.97rem', color: '#3D2010', lineHeight: 1.8, marginBottom: '2rem', maxWidth: 460 }}>
-                  A pilgrim guest house at the sacred confluence in Rudraprayag — complimentary sattvic meals, certified yoga classes with instructor Nakul Sharma, and peaceful rooms near the upcoming railway station.
+                  A pilgrim guest house at Chitrakoot Dham, Rudraprayag — complimentary sattvic meals, certified yoga classes with instructor Nakul Sharma, and peaceful rooms near the upcoming railway station.
                 </p>
 
                 {/* CTAs */}

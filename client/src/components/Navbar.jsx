@@ -31,8 +31,8 @@ export default function Navbar() {
             <img src="/images/logo_harom.png" alt="Har Om" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
           </div>
           <div>
-            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.95rem', color: '#1A0A00', lineHeight: 1.25 }}>Rudraprayag Dharamshala</div>
-            <div style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.72rem', color: '#E8520A', lineHeight: 1.3 }}>रुद्रप्रयाग धर्मशाला</div>
+            <div style={{ fontFamily: 'Inter, sans-serif', fontWeight: 700, fontSize: '0.95rem', color: '#1A0A00', lineHeight: 1.25 }}>Hari Om Trust</div>
+            <div style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.72rem', color: '#E8520A', lineHeight: 1.3 }}>चित्रकूट धाम</div>
           </div>
         </Link>
 
