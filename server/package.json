@@ -1,0 +1,33 @@
+{
+  "name": "dharamshala-server",
+  "version": "1.0.0",
+  "description": "Devprayag Dharamshala — Express Backend API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js",
+    "seed": "node scripts/seed.js",
+    "reconcile": "node scripts/reconcile.js"
+  },
+  "keywords": ["dharamshala", "devprayag", "uttarakhand"],
+  "author": "Devprayag Dharamshala Trust",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "express-mongo-sanitize": "^2.2.0",
+    "express-rate-limit": "^7.3.1",
+    "express-validator": "^7.2.0",
+    "helmet": "^7.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.4.1",
+    "node-cron": "^3.0.3",
+    "nodemailer": "^6.9.13",
+    "razorpay": "^2.9.2"
+  }
+}

@@ -1,0 +1,132 @@
+const express = require('express');
+const crypto = require('crypto');
+const { body, validationResult } = require('express-validator');
+const Razorpay = require('razorpay');
+const Donation = require('../models/Donation');
+const { generateDonationId } = require('../utils/idGenerator');
+const { sendDonationReceipt } = require('../email/templates');
+const { verifyAdminToken } = require('../middleware/verifyAdminToken');
+const { donationInitiateLimiter } = require('../middleware/rateLimiter');
+
+const router = express.Router();
+
+const razorpay = new Razorpay({
+  key_id: process.env.RAZORPAY_KEY_ID,
+  key_secret: process.env.RAZORPAY_KEY_SECRET,
+});
+
+// ── POST /donations/initiate ──
+router.post('/initiate',
+  donationInitiateLimiter,
+  [
+    body('amount').isFloat({ min: 11 }).withMessage('Minimum donation amount is ₹11.'),
+    body('donorName').trim().notEmpty().withMessage('Donor name is required.'),
+    body('donorEmail').isEmail().withMessage('Valid email is required.'),
+    body('message').optional().trim(),
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+
+    const { amount, donorName, donorEmail, message } = req.body;
+    const amountInt = Math.round(Number(amount));
+
+    try {
+      const donationId = generateDonationId();
+      const order = await razorpay.orders.create({
+        amount: amountInt * 100, // paise
+        currency: 'INR',
+        receipt: donationId,
+        notes: { donationId, donorName, donorEmail },
+      });
+
+      const donation = await Donation.create({
+        donationId,
+        donorName: donorName.trim(),
+        donorEmail: donorEmail.trim().toLowerCase(),
+        amount: amountInt,
+        message: (message || '').trim(),
+        razorpayOrderId: order.id,
+        status: 'PENDING',
+      });
+
+      res.status(201).json({
+        success: true,
+        donationId: donation.donationId,
+        razorpayOrderId: order.id,
+        amount: order.amount,
+        currency: 'INR',
+        keyId: process.env.RAZORPAY_KEY_ID,
+      });
+    } catch (err) {
+      console.error('[Donation] initiate error:', err.message);
+      res.status(500).json({ error: 'Donation initiation failed. Please try again.' });
+    }
+  }
+);
+
+// ── POST /donations/webhook — Razorpay webhook ──
+router.post('/webhook',
+  express.raw({ type: 'application/json' }),
+  async (req, res) => {
+    const sig = req.headers['x-razorpay-signature'];
+    const expected = crypto
+      .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
+      .update(req.body)
+      .digest('hex');
+
+    if (sig !== expected) {
+      return res.status(400).json({ error: 'Invalid signature' });
+    }
+
+    let event;
+    try {
+      event = JSON.parse(req.body);
+    } catch {
+      return res.status(400).json({ error: 'Invalid JSON body' });
+    }
+
+    if (event.event === 'payment.captured') {
+      const payment = event.payload.payment.entity;
+      try {
+        const donation = await Donation.findOne({ razorpayOrderId: payment.order_id });
+        if (donation && donation.status !== 'CONFIRMED') {
+          donation.status = 'CONFIRMED';
+          donation.razorpayPaymentId = payment.id;
+          await donation.save();
+
+          const emailSent = await sendDonationReceipt(donation);
+          if (emailSent) {
+            donation.emailSentAt = new Date();
+            await donation.save();
+          }
+          console.log('[Webhook] Donation confirmed:', donation.donationId);
+        }
+      } catch (err) {
+        console.error('[Webhook] Donation confirm error:', err.message);
+      }
+    }
+
+    res.json({ status: 'ok' });
+  }
+);
+
+// ── GET /admin/donations — Admin: list donations ──
+router.get('/admin/list',
+  verifyAdminToken,
+  async (req, res) => {
+    const { page = 1, limit = 20 } = req.query;
+    try {
+      const donations = await Donation.find()
+        .sort({ createdAt: -1 })
+        .skip((page - 1) * limit)
+        .limit(Number(limit));
+      const total = await Donation.countDocuments();
+      res.json({ success: true, data: donations, total });
+    } catch {
+      res.status(500).json({ error: 'Failed to fetch donations.' });
+    }
+  }
+);
+
+module.exports = router;
