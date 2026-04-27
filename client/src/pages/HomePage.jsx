@@ -73,9 +73,18 @@ export default function HomePage() {
               </div>
 
               {/* Right — hero image */}
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <div style={{ borderRadius: 20, overflow: 'hidden', boxShadow: '0 20px 60px rgba(232,82,10,0.18)', width: '100%', maxWidth: 520, aspectRatio: '4/3' }}>
-                  <img src="/images/hero_temple.png" alt="Devprayag temple at sacred river confluence" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+              <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <div style={{
+                  borderRadius: 20,
+                  overflow: 'hidden',
+                  width: '100%',
+                  maxWidth: 520,
+                  aspectRatio: '4/3',
+                  animation: 'heroFloat 4s ease-in-out infinite',
+                  boxShadow: '0 20px 60px rgba(232,82,10,0.22)',
+                  willChange: 'transform',
+                }}>
+                  <img src="/images/hero_temple.png" alt="Chitrakoot Dham at the sacred river confluence" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               </div>
             </div>
@@ -225,7 +234,14 @@ export default function HomePage() {
         </section>
       </main>
       <Footer />
-      <style>{`@media(max-width:768px){.hero-grid{grid-template-columns:1fr!important;}}`}</style>
+      <style>{`
+        @media(max-width:768px){.hero-grid{grid-template-columns:1fr!important;}}
+        @keyframes heroFloat {
+          0%   { transform: translateY(0px);    box-shadow: 0 20px 60px rgba(232,82,10,0.22); }
+          50%  { transform: translateY(-14px);  box-shadow: 0 34px 80px rgba(232,82,10,0.30); }
+          100% { transform: translateY(0px);    box-shadow: 0 20px 60px rgba(232,82,10,0.22); }
+        }
+      `}</style>
     </>
   );
 }
