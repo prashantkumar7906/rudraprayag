@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import GangaJourneyHero from '../components/GangaJourneyHero';
 import api from '../api/axios';
 
 const PRESETS = [101, 251, 501, 1001, 2501];
 const SEVAS = [
-  { title:'Annadan',     hindi:'अन्नदान', desc:'₹251 feeds one pilgrim a sattvic meal.' },
-  { title:'Sangam Aarti',hindi:'आरती',    desc:'₹501 supports a day of evening aarti.' },
-  { title:'Shelter',     hindi:'आश्रय',  desc:'₹1001 covers a night\'s stay for a needy traveller.' },
+  { title:'Annadan',      hindi:'अन्नदान', desc:'₹251 feeds one pilgrim a sattvic meal at the dharmashala kitchen.', img:'/journey/annadan.png' },
+  { title:'Sangam Aarti', hindi:'आरती',    desc:'₹501 supports a full day of evening aarti at the Sangam ghat.', img:'/journey/aarti.png' },
+  { title:'Shelter',      hindi:'आश्रय',  desc:'₹1001 covers a night\'s rest for a needy sadhu or pilgrim.', img:'/journey/shelter.png' },
 ];
 const PURPOSES = ['Annadan / अन्नदान','Sangam Aarti / संगम आरती','Shelter / आश्रय','General / सामान्य दान'];
 
@@ -21,7 +22,7 @@ export default function DonatePage() {
   const [paying, setPaying] = useState(false);
 
   const effective = amt ? Number(amt) : sel;
-  useEffect(() => { document.title = 'Donate — Devprayag Dharamshala'; }, []);
+  useEffect(() => { document.title = 'Donate — Hari Om Trust · Rudraprayag'; }, []);
 
   const pick = v => { setSel(v); setAmt(String(v)); setErrors(e=>({...e,amount:''})); };
   const upd = k => e => { setForm(f=>({...f,[k]:e.target.value})); setErrors(er=>({...er,[k]:''})); };
@@ -48,12 +49,23 @@ export default function DonatePage() {
     <>
       <Navbar />
       <script src="https://checkout.razorpay.com/v1/checkout.js" async />
-      <main style={{background:'#FDF6EE',minHeight:'100vh',padding:'3.5rem 0 5rem'}}>
+
+      {/* ── Ganga Scroll Journey ── */}
+      <GangaJourneyHero />
+
+      {/* ── Transition band ── */}
+      <div style={{
+        background: 'linear-gradient(180deg, #0d4a75 0%, #FDF6EE 100%)',
+        height: 120,
+        marginTop: -2,
+      }} />
+
+      <main style={{background:'#FDF6EE',minHeight:'60vh',padding:'2rem 0 5rem'}}>
         <div className="container">
 
           {/* Header */}
           <div style={{marginBottom:'2.5rem'}}>
-            <div className="eyebrow" style={{marginBottom:'0.5rem'}}>♡ Annadan &amp; Seva</div>
+            <div className="eyebrow" style={{marginBottom:'0.5rem'}}>Annadan &amp; Seva</div>
             <h1 style={{fontFamily:'Playfair Display,serif',fontSize:'clamp(1.8rem,3.5vw,2.6rem)',color:'#1A0A00',fontWeight:700,marginBottom:'0.2rem'}}>Offer a donation</h1>
             <p style={{fontFamily:'Noto Sans Devanagari,sans-serif',color:'#C4581A',fontSize:'0.95rem',marginBottom:'0.9rem'}}>अपनी सेवा अर्पित करें</p>
             <p style={{fontSize:'0.92rem',color:'#3D2010',lineHeight:1.75,maxWidth:560}}>Your contribution sustains the kitchen, the daily aarti, and shelter for sadhus and pilgrims at the Sangam. Donate any amount above ₹11.</p>
@@ -61,15 +73,45 @@ export default function DonatePage() {
 
           <div style={{display:'grid',gridTemplateColumns:'2fr 3fr',gap:'2rem',alignItems:'start'}} className="donate-grid">
 
-            {/* LEFT — seva cards */}
+            {/* LEFT — seva cards with images */}
             <div style={{display:'flex',flexDirection:'column',gap:'1rem'}}>
-              {SEVAS.map(({title,hindi,desc})=>(
-                <div key={title} style={{background:'#fff',border:'1px solid #F0E8DF',borderRadius:12,padding:'1.25rem'}}>
-                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:'0.35rem'}}>
-                    <span style={{fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:'0.95rem',color:'#1A0A00'}}>{title}</span>
-                    <span style={{fontFamily:'Noto Sans Devanagari,sans-serif',fontSize:'0.72rem',color:'#E8520A',marginLeft:'0.5rem'}}>/ {hindi}</span>
+              {SEVAS.map(({title,hindi,desc,img})=>(
+                <div key={title} style={{
+                  background:'#fff',
+                  border:'1px solid #F0E8DF',
+                  borderRadius:14,
+                  overflow:'hidden',
+                  boxShadow:'0 2px 12px rgba(232,82,10,0.06)',
+                  transition:'transform 0.25s ease, box-shadow 0.25s ease',
+                }}
+                  onMouseEnter={e=>{e.currentTarget.style.transform='translateY(-3px)';e.currentTarget.style.boxShadow='0 8px 28px rgba(232,82,10,0.13)';}}
+                  onMouseLeave={e=>{e.currentTarget.style.transform='translateY(0)';e.currentTarget.style.boxShadow='0 2px 12px rgba(232,82,10,0.06)';}}
+                >
+                  {/* Image */}
+                  <div style={{height:120,overflow:'hidden',position:'relative'}}>
+                    <img src={img} alt={title} style={{
+                      width:'100%',height:'100%',objectFit:'cover',
+                      transition:'transform 0.5s ease',
+                      display:'block',
+                    }}
+                      onMouseEnter={e=>e.target.style.transform='scale(1.06)'}
+                      onMouseLeave={e=>e.target.style.transform='scale(1)'}
+                    />
+                    <div style={{
+                      position:'absolute',inset:0,
+                      background:'linear-gradient(to top, rgba(26,10,0,0.55) 0%, transparent 60%)',
+                    }}/>
+                    <span style={{
+                      position:'absolute',bottom:8,left:12,
+                      fontFamily:'Noto Sans Devanagari,sans-serif',
+                      fontSize:'0.75rem',color:'rgba(255,255,255,0.85)',
+                    }}>{hindi}</span>
                   </div>
-                  <p style={{fontSize:'0.82rem',color:'#C4581A',margin:0,lineHeight:1.6}}>{desc}</p>
+                  {/* Text */}
+                  <div style={{padding:'0.9rem 1.1rem'}}>
+                    <div style={{fontFamily:'Playfair Display,serif',fontWeight:700,fontSize:'0.97rem',color:'#1A0A00',marginBottom:'0.3rem'}}>{title}</div>
+                    <p style={{fontSize:'0.8rem',color:'#6B3A1F',margin:0,lineHeight:1.65}}>{desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
