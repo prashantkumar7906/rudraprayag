@@ -6,9 +6,9 @@ const IMGS = [
   { src:'/images/gallery_devprayag.png',   alt:'Devprayag aerial — sacred river confluence' },
   { src:'/images/gallery_diyas.png',        alt:'Diyas burning in temple' },
   { src:'/images/gallery_diya_single.png',  alt:'Single diya flame' },
-  { src:'/images/room_standard.png',        alt:'Standard Room interior' },
-  { src:'/images/room_deluxe.png',          alt:'Deluxe Room interior' },
-  { src:'/images/room_family.png',          alt:'Family Suite interior' },
+  { src:'/images/room_standard.png',        alt:'Non AC Room interior' },
+  { src:'/images/room_deluxe.png',          alt:'AC Room interior' },
+  { src:'/images/room_family.png',          alt:'Spacious AC Room interior' },
 ];
 
 export default function GalleryPage() {

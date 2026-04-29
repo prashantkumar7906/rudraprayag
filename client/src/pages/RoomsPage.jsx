@@ -4,10 +4,10 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const ROOMS = [
-  { id: 'standard', name: 'Standard Room', hindi: 'मानक कक्ष', capacity: 'Up to 2', view: 'Free WiFi',     price: 800,  image: '/images/room_standard.png', desc: 'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam.' },
-  { id: 'deluxe',   name: 'Deluxe Room',   hindi: 'डीलक्स कक्ष',      capacity: 'Up to 3', view: 'Balcony View', price: 1500, image: '/images/room_deluxe.png',   desc: 'Spacious room with a private balcony overlooking the valley and the cool Himalayan breeze.' },
-  { id: 'family',   name: 'Family Suite',  hindi: 'पारिवारिक सुइट',  capacity: 'Up to 5', view: 'Sangam View', price: 2500, image: '/images/room_family.png',   desc: 'Generous suite with sacred Sangam views, perfect for families on the Char Dham Yatra.' },
+  { id: 'non-ac', name: 'Non AC Room', hindi: 'गैर-एसी कक्ष', capacity: 'Up to 2', view: 'Free WiFi',     price: 800,  image: '/images/room_standard.png', desc: 'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam.' },
+  { id: 'ac',     name: 'AC Room',     hindi: 'एसी कक्ष',      capacity: 'Up to 3', view: 'Balcony View', price: 1500, image: '/images/room_deluxe.png',   desc: 'Spacious air-conditioned room with a private balcony overlooking the valley and the cool Himalayan breeze.' },
 ];
+
 
 export default function RoomsPage() {
   const navigate = useNavigate();

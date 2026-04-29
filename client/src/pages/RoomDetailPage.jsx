@@ -5,9 +5,8 @@ import Footer from '../components/Footer';
 import api from '../api/axios';
 
 const DB = {
-  standard: { name:'Standard Room', hindi:'मानक कक्ष', capacity:'Up to 2', price:800,  image:'/images/room_standard.png', desc:'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam. Ideal for solo pilgrims and couples.', descH:'संगम के निकट एक स्वच्छ और शांतिपूर्ण कक्ष।', amenities:['Balcony View','Free WiFi','Tea/Coffee','Attached Bath','Daily Housekeeping'] },
-  deluxe:   { name:'Deluxe Room',   hindi:'डीलक्स कक्ष',     capacity:'Up to 3', price:1500, image:'/images/room_deluxe.png',   desc:'Spacious room with a private balcony overlooking the sacred valley. Wake up to cool Himalayan air and the sound of flowing rivers.', descH:'बालकनी के साथ विशाल कक्ष, घाटी का मनोरम दृश्य।', amenities:['Balcony View','Free WiFi','Attached Bath','Tea/Coffee','Daily Housekeeping'] },
-  family:   { name:'Family Suite',  hindi:'पारिवारिक सुइट', capacity:'Up to 5', price:2500, image:'/images/room_family.png',   desc:'A generous suite with direct Sangam views, perfect for families on the Char Dham Yatra together. Multiple beds and ample space.', descH:'परिवार के लिए विशाल सुइट, संगम का सीधा दृश्य।', amenities:['Sangam View','Balcony','Free WiFi','Attached Bath','Daily Housekeeping'] },
+  'non-ac': { name:'Non AC Room', hindi:'गैर-एसी कक्ष', capacity:'Up to 2', price:800,  image:'/images/room_standard.png', desc:'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam. Ideal for solo pilgrims and couples.', descH:'संगम के निकट एक स्वच्छ और शांतिपूर्ण कक्ष।', amenities:['Balcony View','Free WiFi','Tea/Coffee','Attached Bath','Daily Housekeeping'] },
+  'ac':     { name:'AC Room',     hindi:'एसी कक्ष',     capacity:'Up to 3', price:1500, image:'/images/room_deluxe.png',   desc:'Spacious air-conditioned room with a private balcony overlooking the sacred valley. Wake up to cool Himalayan air and the sound of flowing rivers.', descH:'बालकनी के साथ विशाल वातानुकूलित कक्ष, घाटी का मनोरम दृश्य।', amenities:['AC','Balcony View','Free WiFi','Attached Bath','Tea/Coffee','Daily Housekeeping'] },
 };
 
 // Defined OUTSIDE the page component so React doesn't remount it on every render
