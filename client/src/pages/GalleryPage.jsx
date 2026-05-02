@@ -3,6 +3,11 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const IMGS = [
+  { src:'/images/gallery_user_1.jpg',       alt:'Gau Mata' },
+  { src:'/images/gallery_user_2.jpg',       alt:'Riverside view' },
+  { src:'/images/gallery_user_3.jpg',       alt:'Night sky' },
+  { src:'/images/gallery_user_4.jpg',       alt:'Gau Mata calf' },
+  { src:'/images/gallery_user_5.jpg',       alt:'Pooja rituals' },
   { src:'/images/gallery_devprayag.png',   alt:'Devprayag aerial — sacred river confluence' },
   { src:'/images/gallery_diyas.png',        alt:'Diyas burning in temple' },
   { src:'/images/gallery_diya_single.png',  alt:'Single diya flame' },

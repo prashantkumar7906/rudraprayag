@@ -156,6 +156,9 @@ export default function BookPage() {
   const [guestName, setGuestName] = useState('');
   const [guestEmail, setGuestEmail] = useState('');
   const [guestPhone, setGuestPhone] = useState('');
+  const [citizenship, setCitizenship] = useState('Indian');
+  const [idType, setIdType] = useState('Aadhar');
+  const [idNumber, setIdNumber] = useState('');
   const [specialRequests, setSpecialRequests] = useState('');
   const [honeypot, setHoneypot] = useState(''); // hidden field
   const [step2Errors, setStep2Errors] = useState({});
@@ -212,8 +215,14 @@ export default function BookPage() {
     if (!guestEmail.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(guestEmail))
       errors.guestEmail = 'Valid email is required.';
     const phone = guestPhone.replace(/\s/g, '');
-    if (!phone || !/^[6-9]\d{9}$/.test(phone))
-      errors.guestPhone = 'Enter a valid 10-digit Indian mobile number.';
+    if (citizenship === 'Indian') {
+      if (!phone || !/^[6-9]\d{9}$/.test(phone))
+        errors.guestPhone = 'Enter a valid 10-digit Indian mobile number.';
+    } else {
+      if (!phone || phone.length < 8)
+        errors.guestPhone = 'Enter a valid mobile number.';
+    }
+    if (!idNumber.trim()) errors.idNumber = 'ID Number is required.';
     return errors;
   };
 
@@ -237,6 +246,9 @@ export default function BookPage() {
         guestName: guestName.trim(),
         guestEmail: guestEmail.trim(),
         guestPhone: guestPhone.replace(/\s/g, ''),
+        citizenship,
+        idType,
+        idNumber: idNumber.trim(),
         specialRequests: specialRequests.trim(),
         website: honeypot, // honeypot
       });
@@ -451,25 +463,103 @@ export default function BookPage() {
 
                   <div>
                     <label className="block text-sm font-medium mb-1" style={{ color: '#2C1200' }}>
-                      Phone Number (+91) *
+                      Phone Number {citizenship === 'Indian' && '(+91)'} *
                     </label>
                     <div className="flex gap-2">
-                      <div
-                        className="form-input w-20 flex items-center justify-center text-sm"
-                        style={{ background: '#FFF0E0', flexShrink: 0 }}
-                      >
-                        +91
-                      </div>
+                      {citizenship === 'Indian' && (
+                        <div
+                          className="form-input w-20 flex items-center justify-center text-sm"
+                          style={{ background: '#FFF0E0', flexShrink: 0 }}
+                        >
+                          +91
+                        </div>
+                      )}
                       <input
                         type="tel"
                         className={'form-input flex-1' + (step2Errors.guestPhone ? ' error' : '')}
-                        placeholder="98765 43210"
-                        maxLength={10}
+                        placeholder={citizenship === 'Indian' ? "98765 43210" : "Phone Number"}
+                        maxLength={citizenship === 'Indian' ? 10 : 15}
                         value={guestPhone}
                         onChange={e => setGuestPhone(e.target.value.replace(/\D/g, ''))}
                       />
                     </div>
                     {step2Errors.guestPhone && <p className="error-text">{step2Errors.guestPhone}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium mb-2" style={{ color: '#2C1200' }}>
+                      Citizenship *
+                    </label>
+                    <div className="flex gap-4">
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="citizenship"
+                          value="Indian"
+                          checked={citizenship === 'Indian'}
+                          onChange={() => {
+                            setCitizenship('Indian');
+                            setIdType('Aadhar');
+                            setIdNumber('');
+                          }}
+                          className="w-4 h-4 text-bhagwa focus:ring-bhagwa"
+                        />
+                        <span>Indian</span>
+                      </label>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input
+                          type="radio"
+                          name="citizenship"
+                          value="Foreigner"
+                          checked={citizenship === 'Foreigner'}
+                          onChange={() => {
+                            setCitizenship('Foreigner');
+                            setIdType('Passport');
+                            setIdNumber('');
+                          }}
+                          className="w-4 h-4 text-bhagwa focus:ring-bhagwa"
+                        />
+                        <span>Foreigner</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium mb-1" style={{ color: '#2C1200' }}>
+                        ID Type *
+                      </label>
+                      <select
+                        className="form-input"
+                        value={idType}
+                        onChange={e => setIdType(e.target.value)}
+                        disabled={citizenship === 'Foreigner'}
+                      >
+                        {citizenship === 'Indian' ? (
+                          <>
+                            <option value="Aadhar">Aadhar Card</option>
+                            <option value="PAN">PAN Card</option>
+                            <option value="Voter ID">Voter ID</option>
+                            <option value="Driving License">Driving License</option>
+                          </>
+                        ) : (
+                          <option value="Passport">Passport</option>
+                        )}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium mb-1" style={{ color: '#2C1200' }}>
+                        ID Number *
+                      </label>
+                      <input
+                        type="text"
+                        className={'form-input' + (step2Errors.idNumber ? ' error' : '')}
+                        placeholder={idType === 'Passport' ? "Passport Number" : `${idType} Number`}
+                        value={idNumber}
+                        onChange={e => setIdNumber(e.target.value)}
+                      />
+                      {step2Errors.idNumber && <p className="error-text">{step2Errors.idNumber}</p>}
+                    </div>
                   </div>
 
                   <div>

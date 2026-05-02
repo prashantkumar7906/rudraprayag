@@ -457,7 +457,15 @@ export default function AdminDashboardPage() {
                                 </div>
                                 <div>
                                   <span style={{ color: '#9a7050' }}>Phone:</span>
-                                  <div style={{ fontWeight: 600 }}>+91 {b.guestPhone}</div>
+                                  <div style={{ fontWeight: 600 }}>{b.citizenship === 'Indian' ? '+91 ' : ''}{b.guestPhone}</div>
+                                </div>
+                                <div>
+                                  <span style={{ color: '#9a7050' }}>Citizenship:</span>
+                                  <div style={{ fontWeight: 600 }}>{b.citizenship || 'Indian'}</div>
+                                </div>
+                                <div>
+                                  <span style={{ color: '#9a7050' }}>ID ({b.idType || 'N/A'}):</span>
+                                  <div style={{ fontWeight: 600 }}>{b.idNumber || 'N/A'}</div>
                                 </div>
                                 <div>
                                   <span style={{ color: '#9a7050' }}>Payment ID:</span>

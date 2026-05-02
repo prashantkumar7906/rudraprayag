@@ -11,6 +11,9 @@ const bookingSchema = new mongoose.Schema({
   guestName: { type: String, required: true },
   guestEmail: { type: String, required: true },
   guestPhone: { type: String, required: true },
+  citizenship: { type: String, enum: ['Indian', 'Foreigner'], required: true, default: 'Indian' },
+  idType: { type: String, required: true },
+  idNumber: { type: String, required: true },
   specialRequests: { type: String, default: '' },
   priceBreakdown: {
     baseAmount: { type: Number, required: true },

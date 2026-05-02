@@ -27,7 +27,17 @@ router.post('/initiate',
     body('guests').isInt({ min: 1, max: 6 }).withMessage('Guests must be between 1 and 6.'),
     body('guestName').trim().notEmpty().withMessage('Guest name is required.'),
     body('guestEmail').isEmail().withMessage('Valid email is required.'),
-    body('guestPhone').matches(/^[6-9]\d{9}$/).withMessage('Valid Indian phone number required.'),
+    body('guestPhone').custom((value, { req }) => {
+      if (req.body.citizenship === 'Indian') {
+        if (!/^[6-9]\d{9}$/.test(value)) throw new Error('Valid Indian phone number required.');
+      } else {
+        if (!value || value.length < 8) throw new Error('Valid phone number required.');
+      }
+      return true;
+    }),
+    body('citizenship').isIn(['Indian', 'Foreigner']).withMessage('Valid citizenship is required.'),
+    body('idType').notEmpty().withMessage('ID Type is required.'),
+    body('idNumber').trim().notEmpty().withMessage('ID Number is required.'),
   ],
   async (req, res) => {
     // Honeypot check
@@ -38,7 +48,7 @@ router.post('/initiate',
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
-    const { roomTypeId, checkIn, checkOut, guests, guestName, guestEmail, guestPhone, specialRequests } = req.body;
+    const { roomTypeId, checkIn, checkOut, guests, guestName, guestEmail, guestPhone, citizenship, idType, idNumber, specialRequests } = req.body;
     const checkInDate = new Date(checkIn);
     const checkOutDate = new Date(checkOut);
 
@@ -106,6 +116,9 @@ router.post('/initiate',
         guestName: guestName.trim(),
         guestEmail: guestEmail.trim().toLowerCase(),
         guestPhone,
+        citizenship,
+        idType,
+        idNumber: idNumber.trim(),
         specialRequests: (specialRequests || '').trim(),
         priceBreakdown: { baseAmount, gstAmount, totalAmount },
         razorpayOrderId: order.id,

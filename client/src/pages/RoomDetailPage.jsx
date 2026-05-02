@@ -35,7 +35,7 @@ export default function RoomDetailPage() {
   const room = DB[roomId];
   const today = new Date().toISOString().split('T')[0];
 
-  const [form, setForm] = useState({ name:'', email:'', phone:'', guests:1, checkIn: state?.checkIn||'', checkOut: state?.checkOut||'', requests:'' });
+  const [form, setForm] = useState({ name:'', email:'', phone:'', guests:1, checkIn: state?.checkIn||'', checkOut: state?.checkOut||'', requests:'', citizenship:'Indian', idType:'Aadhar', idNumber:'' });
   const [errors, setErrors] = useState({});
   const [paying, setPaying] = useState(false);
 
@@ -55,7 +55,13 @@ export default function RoomDetailPage() {
     const e={};
     if (!form.name.trim()) e.name='Name is required';
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) e.email='Valid email required';
-    if (!/^[6-9]\d{9}$/.test(form.phone.replace(/\s/g,''))) e.phone='Valid 10-digit mobile required';
+    const phone = form.phone.replace(/\s/g,'');
+    if (form.citizenship === 'Indian') {
+      if (!/^[6-9]\d{9}$/.test(phone)) e.phone='Valid 10-digit mobile required';
+    } else {
+      if (!phone || phone.length < 8) e.phone='Valid mobile required';
+    }
+    if (!form.idNumber.trim()) e.idNumber='ID Number required';
     if (!form.checkIn) e.checkIn='Select check-in';
     if (!form.checkOut) e.checkOut='Select check-out';
     if (form.checkOut && form.checkIn && form.checkOut<=form.checkIn) e.checkOut='Check-out must be after check-in';
@@ -66,7 +72,7 @@ export default function RoomDetailPage() {
     const errs=validate(); if(Object.keys(errs).length) return setErrors(errs);
     setPaying(true);
     try {
-      const res = await api.post('/bookings/initiate', { roomTypeId:roomId, checkIn:form.checkIn, checkOut:form.checkOut, guests:Number(form.guests), guestName:form.name.trim(), guestEmail:form.email.trim(), guestPhone:form.phone.replace(/\s/g,''), specialRequests:form.requests.trim() });
+      const res = await api.post('/bookings/initiate', { roomTypeId:roomId, checkIn:form.checkIn, checkOut:form.checkOut, guests:Number(form.guests), guestName:form.name.trim(), guestEmail:form.email.trim(), guestPhone:form.phone.replace(/\s/g,''), citizenship:form.citizenship, idType:form.idType, idNumber:form.idNumber.trim(), specialRequests:form.requests.trim() });
       const { bookingId, razorpayOrderId, amount, keyId } = res.data;
       new window.Razorpay({ key:keyId||import.meta.env.VITE_RAZORPAY_KEY_ID, amount, currency:'INR', name:'Devprayag Dharamshala', description:`${room.name} — ${nights} night${nights!==1?'s':''}`, order_id:razorpayOrderId, prefill:{name:form.name,email:form.email,contact:form.phone}, theme:{color:'#E8520A'}, handler:()=>navigate(`/booking-confirmation/${bookingId}`), modal:{ondismiss:()=>setPaying(false)} }).open();
     } catch(err) { setErrors({submit:err.message||'Booking failed. Try again.'}); setPaying(false); }
@@ -112,6 +118,34 @@ export default function RoomDetailPage() {
                 <FormField label="Name"  h="नाम"   fieldKey="name"  req form={form} errors={errors} upd={upd} />
                 <FormField label="Email" h="ईमेल"  fieldKey="email" type="email" req form={form} errors={errors} upd={upd} />
                 <FormField label="Phone" h="फ़ोन"  fieldKey="phone" type="tel"   req form={form} errors={errors} upd={upd} />
+                {/* Citizenship */}
+                <div style={{gridColumn:'span 2'}}>
+                  <label style={{display:'block',fontSize:'0.82rem',fontWeight:500,color:'#3D2010',marginBottom:'0.3rem'}}>Citizenship <span style={{fontFamily:'Noto Sans Devanagari',fontSize:'0.75rem',color:'#C4581A'}}>/ नागरिकता</span> <span style={{color:'#E8520A'}}>*</span></label>
+                  <div style={{display:'flex',gap:'1rem'}}>
+                    <label style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.85rem'}}><input type="radio" name="citizenship" value="Indian" checked={form.citizenship==='Indian'} onChange={e=>{setForm(f=>({...f,citizenship:'Indian',idType:'Aadhar',idNumber:''}));}} /> Indian</label>
+                    <label style={{display:'flex',alignItems:'center',gap:'0.3rem',fontSize:'0.85rem'}}><input type="radio" name="citizenship" value="Foreigner" checked={form.citizenship==='Foreigner'} onChange={e=>{setForm(f=>({...f,citizenship:'Foreigner',idType:'Passport',idNumber:''}));}} /> Foreigner</label>
+                  </div>
+                </div>
+
+                {/* ID Type */}
+                <div>
+                  <label style={{display:'block',fontSize:'0.82rem',fontWeight:500,color:'#3D2010',marginBottom:'0.3rem'}}>ID Type <span style={{fontFamily:'Noto Sans Devanagari',fontSize:'0.75rem',color:'#C4581A'}}>/ पहचान पत्र</span> <span style={{color:'#E8520A'}}>*</span></label>
+                  <select className={`form-input${errors.idType?' error':''}`} value={form.idType} onChange={upd('idType')} disabled={form.citizenship==='Foreigner'}>
+                    {form.citizenship === 'Indian' ? (
+                      <>
+                        <option value="Aadhar">Aadhar Card</option>
+                        <option value="PAN">PAN Card</option>
+                        <option value="Voter ID">Voter ID</option>
+                        <option value="Driving License">Driving License</option>
+                      </>
+                    ) : (
+                      <option value="Passport">Passport</option>
+                    )}
+                  </select>
+                </div>
+
+                {/* ID Number */}
+                <FormField label="ID Number" h="पहचान संख्या" fieldKey="idNumber" req form={form} errors={errors} upd={upd} />
                 {/* Guests */}
                 <div>
                   <label style={{display:'block',fontSize:'0.82rem',fontWeight:500,color:'#3D2010',marginBottom:'0.3rem'}}>Guests <span style={{fontFamily:'Noto Sans Devanagari',fontSize:'0.75rem',color:'#C4581A'}}>/ अतिथि</span></label>
