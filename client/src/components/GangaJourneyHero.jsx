@@ -65,6 +65,7 @@ const STOPS = [
 
 export default function GangaJourneyHero() {
   const sectionRef = useRef(null);
+  const ticking = useRef(false);
   const [progress, setProgress] = useState(0);
   const [activeIdx, setActiveIdx] = useState(0);
   const [prevIdx, setPrevIdx] = useState(0);
@@ -73,21 +74,30 @@ export default function GangaJourneyHero() {
   const lastIdxRef = useRef(0);
 
   const onScroll = useCallback(() => {
-    const el = sectionRef.current;
-    if (!el) return;
-    const rect = el.getBoundingClientRect();
-    const total = el.offsetHeight - window.innerHeight;
-    const scrolled = Math.max(0, -rect.top);
-    const p = Math.min(1, Math.max(0, scrolled / total));
-    setProgress(p);
+    if (!ticking.current) {
+      window.requestAnimationFrame(() => {
+        const el = sectionRef.current;
+        if (!el) {
+          ticking.current = false;
+          return;
+        }
+        const rect = el.getBoundingClientRect();
+        const total = el.offsetHeight - window.innerHeight;
+        const scrolled = Math.max(0, -rect.top);
+        const p = Math.min(1, Math.max(0, scrolled / total));
+        setProgress(p);
 
-    const idx = Math.min(STOPS.length - 1, Math.floor(p * STOPS.length));
-    if (idx !== lastIdxRef.current) {
-      setPrevIdx(lastIdxRef.current);
-      lastIdxRef.current = idx;
-      setActiveIdx(idx);
-      setCrossfade(0);
-      setTimeout(() => setCrossfade(1), 50);
+        const idx = Math.min(STOPS.length - 1, Math.floor(p * STOPS.length));
+        if (idx !== lastIdxRef.current) {
+          setPrevIdx(lastIdxRef.current);
+          lastIdxRef.current = idx;
+          setActiveIdx(idx);
+          setCrossfade(0);
+          setTimeout(() => setCrossfade(1), 50);
+        }
+        ticking.current = false;
+      });
+      ticking.current = true;
     }
   }, []);
 
@@ -118,7 +128,6 @@ export default function GangaJourneyHero() {
           backgroundPosition: 'center',
           opacity: crossfade === 0 ? 1 : 0,
           transition: 'opacity 0.9s ease',
-          filter: 'brightness(0.45)',
         }} />
 
         {/* ── Background image: active (fading in) ── */}
@@ -129,9 +138,16 @@ export default function GangaJourneyHero() {
           backgroundPosition: 'center',
           opacity: crossfade,
           transition: 'opacity 0.9s ease',
-          filter: 'brightness(0.45)',
           transform: `scale(${1 + progress * 0.04})`,
           transformOrigin: 'center bottom',
+          willChange: 'transform, opacity',
+        }} />
+
+        {/* ── Dark overlay replacing expensive CSS filter ── */}
+        <div style={{
+          position: 'absolute', inset: 0,
+          background: 'rgba(0,0,0,0.55)',
+          pointerEvents: 'none',
         }} />
 
         {/* Colour-tinted gradient overlay */}
