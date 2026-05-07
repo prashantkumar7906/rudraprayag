@@ -14,7 +14,10 @@ export default function RoomsPage() {
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
   const today = new Date().toISOString().split('T')[0];
-  useEffect(() => { document.title = 'Rooms — Hari Om Trust, Chitrakoot Dham'; }, []);
+  useEffect(() => { 
+    document.title = 'Rooms — Hari Om Trust, Chitrakoot Dham'; 
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <>

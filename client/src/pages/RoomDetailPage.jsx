@@ -47,6 +47,7 @@ export default function RoomDetailPage() {
     if (!room) { navigate('/rooms',{replace:true}); return; }
     document.title = `${room.name} — Devprayag Dharamshala`;
     setCurrentImageIndex(0);
+    window.scrollTo(0, 0);
   }, [room, navigate]);
 
   if (!room) return null;
