@@ -22,7 +22,7 @@ export default function RoomsPage() {
   return (
     <>
       <Navbar />
-      <main style={{ background: '#FDF6EE', minHeight: '100vh' }}>
+      <main style={{ background: 'transparent', minHeight: '100vh' }}>
         <div className="container" style={{ paddingTop: '3.5rem', paddingBottom: '5rem' }}>
 
           <div style={{ marginBottom: '2.5rem' }}>

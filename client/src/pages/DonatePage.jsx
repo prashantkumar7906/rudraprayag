@@ -55,12 +55,12 @@ export default function DonatePage() {
 
       {/* ── Transition band ── */}
       <div style={{
-        background: 'linear-gradient(180deg, #0d4a75 0%, #FDF6EE 100%)',
+        background: 'linear-gradient(180deg, #0d4a75 0%, transparent 100%)',
         height: 120,
         marginTop: -2,
       }} />
 
-      <main style={{background:'#FDF6EE',minHeight:'60vh',padding:'2rem 0 5rem'}}>
+      <main style={{background:'transparent',minHeight:'60vh',padding:'2rem 0 5rem'}}>
         <div className="container">
 
           {/* Header */}

@@ -13,7 +13,18 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
-body { font-family: 'Inter', 'Noto Sans Devanagari', sans-serif; background: var(--cream); color: var(--body); margin: 0; padding: 0; }
+body {
+  font-family: 'Inter', 'Noto Sans Devanagari', sans-serif;
+  background-color: var(--cream);
+  background-image: url('/images/mantra-bg.svg');
+  background-size: cover;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-position: center top;
+  color: var(--body);
+  margin: 0;
+  padding: 0;
+}
 h1, h2, h3, h4 { font-family: 'Playfair Display', serif; color: var(--dark); margin: 0; }
 a { text-decoration: none; }
 

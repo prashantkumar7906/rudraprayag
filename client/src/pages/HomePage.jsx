@@ -25,7 +25,7 @@ export default function HomePage() {
       <Navbar />
       <main>
         {/* ══ HERO ══ */}
-        <section style={{ background: '#FDF6EE', padding: '5rem 0 4rem' }}>
+        <section style={{ background: 'transparent', padding: '5rem 0 4rem' }}>
           <div className="container">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '3rem', alignItems: 'center' }} className="hero-grid">
 
@@ -92,7 +92,7 @@ export default function HomePage() {
         </section>
 
         {/* ══ TRUST BAR ══ */}
-        <section style={{ background: '#FDF6EE', borderTop: '1px solid #F0E8DF', padding: '1.5rem 0' }}>
+        <section style={{ background: 'transparent', borderTop: '1px solid #F0E8DF', padding: '1.5rem 0' }}>
           <div className="container">
             <div style={{ display: 'flex', justifyContent: 'center', gap: '2.5rem', flexWrap: 'wrap' }}>
               {TRUST.map(({ label }) => (
@@ -106,7 +106,7 @@ export default function HomePage() {
         </section>
 
         {/* ══ ROOMS PREVIEW ══ */}
-        <section style={{ background: '#FDF6EE', padding: '5rem 0' }}>
+        <section style={{ background: 'transparent', padding: '5rem 0' }}>
           <div className="container">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '2rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div>
@@ -217,7 +217,7 @@ export default function HomePage() {
         </section>
 
         {/* ══ ANNADAN BANNER ══ */}
-        <section style={{ background: '#FDF6EE', padding: '0 0 5rem' }}>
+        <section style={{ background: 'transparent', padding: '0 0 5rem' }}>
           <div className="container">
             <div style={{ background: '#fff', border: '1px solid #F0E8DF', borderLeft: '4px solid #E8520A', borderRadius: 16, padding: '2.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
               <div>

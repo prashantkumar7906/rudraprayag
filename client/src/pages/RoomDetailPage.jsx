@@ -86,7 +86,7 @@ export default function RoomDetailPage() {
     <>
       <Navbar />
       <script src="https://checkout.razorpay.com/v1/checkout.js" async />
-      <main style={{background:'#FDF6EE',minHeight:'100vh',padding:'3rem 0 5rem'}}>
+      <main style={{background:'transparent',minHeight:'100vh',padding:'3rem 0 5rem'}}>
         <div className="container">
           <div style={{display:'grid',gridTemplateColumns:'2fr 3fr',gap:'2.5rem',alignItems:'start'}} className="detail-grid">
 

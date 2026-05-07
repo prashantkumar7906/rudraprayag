@@ -34,7 +34,7 @@ export default function GalleryPage() {
   return (
     <>
       <Navbar />
-      <main style={{background:'#FDF6EE',minHeight:'100vh',padding:'3.5rem 0 5rem'}}>
+      <main style={{background:'transparent',minHeight:'100vh',padding:'3.5rem 0 5rem'}}>
         <div className="container">
           <div style={{marginBottom:'2.5rem'}}>
             <div className="eyebrow" style={{marginBottom:'0.5rem'}}>Gallery</div>
