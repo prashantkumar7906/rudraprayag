@@ -5,8 +5,8 @@ import Footer from '../components/Footer';
 import api from '../api/axios';
 
 const DB = {
-  'non-ac': { name:'Non AC Room', hindi:'गैर-एसी कक्ष', capacity:'Up to 2', price:800,  image:'/images/room_standard.png', desc:'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam. Ideal for solo pilgrims and couples.', descH:'संगम के निकट एक स्वच्छ और शांतिपूर्ण कक्ष।', amenities:['Balcony View','Free WiFi','Tea/Coffee','Attached Bath','Daily Housekeeping'] },
-  'ac':     { name:'AC Room',     hindi:'एसी कक्ष',     capacity:'Up to 3', price:1500, image:'/images/room_deluxe.png',   desc:'Spacious air-conditioned room with a private balcony overlooking the sacred valley. Wake up to cool Himalayan air and the sound of flowing rivers.', descH:'बालकनी के साथ विशाल वातानुकूलित कक्ष, घाटी का मनोरम दृश्य।', amenities:['AC','Balcony View','Free WiFi','Attached Bath','Tea/Coffee','Daily Housekeeping'] },
+  'non-ac': { name:'Non AC Room', hindi:'गैर-एसी कक्ष', capacity:'Up to 2', price:800,  image:'/images/non_ac_room_1.jpg', images:['/images/non_ac_room_1.jpg'], desc:'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam. Ideal for solo pilgrims and couples.', descH:'संगम के निकट एक स्वच्छ और शांतिपूर्ण कक्ष।', amenities:['Balcony View','Free WiFi','Tea/Coffee','Attached Bath','Daily Housekeeping'] },
+  'ac':     { name:'AC Room',     hindi:'एसी कक्ष',     capacity:'Up to 3', price:1500, image:'/images/ac_room_1.jpg',   images:['/images/ac_room_1.jpg', '/images/ac_room_2.jpg', '/images/ac_room_3.jpg'], desc:'Spacious air-conditioned room with a private balcony overlooking the sacred valley. Wake up to cool Himalayan air and the sound of flowing rivers.', descH:'बालकनी के साथ विशाल वातानुकूलित कक्ष, घाटी का मनोरम दृश्य।', amenities:['AC','Balcony View','Free WiFi','Attached Bath','Tea/Coffee','Daily Housekeeping'] },
 };
 
 // Defined OUTSIDE the page component so React doesn't remount it on every render
@@ -38,6 +38,7 @@ export default function RoomDetailPage() {
   const [form, setForm] = useState({ name:'', email:'', phone:'', guests:1, checkIn: state?.checkIn||'', checkOut: state?.checkOut||'', requests:'', citizenship:'Indian', idType:'Aadhar', idNumber:'' });
   const [errors, setErrors] = useState({});
   const [paying, setPaying] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const nights = form.checkIn && form.checkOut ? Math.max(0, Math.round((new Date(form.checkOut)-new Date(form.checkIn))/86400000)) : 0;
   const total  = nights * (room?.price||0);
@@ -45,6 +46,7 @@ export default function RoomDetailPage() {
   useEffect(() => {
     if (!room) { navigate('/rooms',{replace:true}); return; }
     document.title = `${room.name} — Devprayag Dharamshala`;
+    setCurrentImageIndex(0);
   }, [room, navigate]);
 
   if (!room) return null;
@@ -89,8 +91,23 @@ export default function RoomDetailPage() {
 
             {/* LEFT */}
             <div>
-              <div style={{borderRadius:16,overflow:'hidden',marginBottom:'1.5rem',boxShadow:'0 8px 32px rgba(26,10,0,0.1)'}}>
-                <img src={room.image} alt={room.name} style={{width:'100%',height:270,objectFit:'cover',display:'block'}} />
+              <div style={{borderRadius:16,overflow:'hidden',marginBottom:'1.5rem',boxShadow:'0 8px 32px rgba(26,10,0,0.1)', position:'relative'}}>
+                <img src={room.images[currentImageIndex] || room.image} alt={room.name} style={{width:'100%',height:270,objectFit:'cover',display:'block',transition:'opacity 0.2s'}} />
+                {room.images?.length > 1 && (
+                  <>
+                    <button onClick={() => setCurrentImageIndex(i => i === 0 ? room.images.length - 1 : i - 1)} style={{position:'absolute',left:10,top:'50%',transform:'translateY(-50%)',background:'rgba(255,255,255,0.85)',border:'none',borderRadius:'50%',width:36,height:36,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',transition:'background 0.2s'}} onMouseEnter={e=>e.currentTarget.style.background='#fff'} onMouseLeave={e=>e.currentTarget.style.background='rgba(255,255,255,0.85)'}>
+                      <span style={{fontSize:'1.5rem',lineHeight:1,color:'#1A0A00',position:'relative',top:-1}}>‹</span>
+                    </button>
+                    <button onClick={() => setCurrentImageIndex(i => (i + 1) % room.images.length)} style={{position:'absolute',right:10,top:'50%',transform:'translateY(-50%)',background:'rgba(255,255,255,0.85)',border:'none',borderRadius:'50%',width:36,height:36,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',boxShadow:'0 2px 8px rgba(0,0,0,0.15)',transition:'background 0.2s'}} onMouseEnter={e=>e.currentTarget.style.background='#fff'} onMouseLeave={e=>e.currentTarget.style.background='rgba(255,255,255,0.85)'}>
+                      <span style={{fontSize:'1.5rem',lineHeight:1,color:'#1A0A00',position:'relative',top:-1}}>›</span>
+                    </button>
+                    <div style={{position:'absolute',bottom:12,left:'50%',transform:'translateX(-50%)',display:'flex',gap:'0.4rem'}}>
+                      {room.images.map((_, i) => (
+                        <div key={i} style={{width:8,height:8,borderRadius:'50%',background:i === currentImageIndex ? '#E8520A' : 'rgba(255,255,255,0.6)',cursor:'pointer',transition:'background 0.2s'}} onClick={() => setCurrentImageIndex(i)} />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'baseline',marginBottom:'0.5rem'}}>
                 <h1 style={{fontFamily:'Playfair Display,serif',fontSize:'1.5rem',color:'#1A0A00'}}>{room.name}</h1>
