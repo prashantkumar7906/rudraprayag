@@ -22,7 +22,21 @@ export default function Navbar() {
   });
 
   return (
-    <nav style={{ background: '#fff', borderBottom: '1px solid #F0E8DF', position: 'sticky', top: 0, zIndex: 100, boxShadow: '0 1px 12px rgba(26,10,0,0.05)' }}>
+    <header style={{ position: 'sticky', top: 0, zIndex: 100 }}>
+      {/* Top Social Banner */}
+      <div style={{ background: '#1A0A00', color: '#FDF6EE', padding: '0.45rem 0', fontSize: '0.75rem', fontFamily: 'Inter, sans-serif' }}>
+        <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#FDF6EE', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: 0.9, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.9}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+            Follow on Instagram
+          </a>
+          <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" style={{ color: '#FDF6EE', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: 0.9, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.9}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.94-2C18.88 4 12 4 12 4s-6.88 0-8.6.46a2.78 2.78 0 0 0-1.94 2A29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33 2.78 2.78 0 0 0 1.94 2c1.72.46 8.6.46 8.6.46s6.88 0 8.6-.46a2.78 2.78 0 0 0 1.94-2 29 29 0 0 0 .46-5.33 29 29 0 0 0-.46-5.33z"></path><polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"></polygon></svg>
+            Subscribe on YouTube
+          </a>
+        </div>
+      </div>
+      <nav style={{ background: '#fff', borderBottom: '1px solid #F0E8DF', boxShadow: '0 1px 12px rgba(26,10,0,0.05)' }}>
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
 
         {/* Logo */}
@@ -69,5 +83,6 @@ export default function Navbar() {
         </div>
       )}
     </nav>
+    </header>
   );
 }
