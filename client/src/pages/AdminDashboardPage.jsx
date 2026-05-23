@@ -685,12 +685,19 @@ export default function AdminDashboardPage() {
     if (activeTab === 'rooms') fetchRooms();
   }, [activeTab]);
 
+  const [statsError, setStatsError] = useState('');
+
   const fetchStats = async () => {
     setLoading(true);
+    setStatsError('');
     try {
       const res = await api.get('/admin/dashboard');
       setStats(res.data);
-    } catch { } finally { setLoading(false); }
+    } catch (err) {
+      setStatsError(err.message || 'Failed to load dashboard data. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const fetchBookings = async () => {
@@ -769,6 +776,10 @@ export default function AdminDashboardPage() {
               {loading ? (
                 <div className="bento-grid">
                   {[1, 2, 3, 4, 5, 6].map(i => <div key={i} className="skeleton rounded-[30px] h-48 animate-pulse" />)}
+                </div>
+              ) : statsError ? (
+                <div className="p-4 bg-red-50 text-red-700 rounded-xl mb-8 border border-red-200">
+                  {statsError}
                 </div>
               ) : stats ? (
                 /* Bento Box Interactive Grid Layout */
