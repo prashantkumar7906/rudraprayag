@@ -11,9 +11,17 @@ const { donationInitiateLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
+const RAZORPAY_KEY = process.env.RAZORPAY_KEY_ID || '';
+const RAZORPAY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
+const razorpayConfigured =
+  RAZORPAY_KEY.startsWith('rzp_') &&
+  !RAZORPAY_KEY.includes('xxxx') &&
+  RAZORPAY_SECRET.length > 10 &&
+  !RAZORPAY_SECRET.includes('xxxx');
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
+  key_id: RAZORPAY_KEY || 'dummy_key',
+  key_secret: RAZORPAY_SECRET || 'dummy_secret',
 });
 
 // ── POST /donations/initiate ──
@@ -39,7 +47,10 @@ router.post('/initiate',
       let donationStatus = 'PENDING';
       let rzpAmount = amountInt * 100;
 
-      if (isCash) {
+      // Force CASH if Razorpay is not configured
+      const effectiveIsCash = isCash || !razorpayConfigured;
+
+      if (effectiveIsCash) {
         donationStatus = 'CONFIRMED';
       } else {
         const order = await razorpay.orders.create({
@@ -58,13 +69,13 @@ router.post('/initiate',
         donorEmail: donorEmail.trim().toLowerCase(),
         amount: amountInt,
         message: (message || '').trim(),
-        razorpayOrderId: isCash ? undefined : orderId,
-        paymentMethod: isCash ? 'CASH' : 'ONLINE',
+        razorpayOrderId: effectiveIsCash ? undefined : orderId,
+        paymentMethod: effectiveIsCash ? 'CASH' : 'ONLINE',
         status: donationStatus,
       });
 
       // Generate Token immediately if CASH
-      if (isCash) {
+      if (effectiveIsCash) {
         const tokenNum = generateTokenId();
         await Token.create({
           tokenNumber: tokenNum,

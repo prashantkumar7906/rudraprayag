@@ -13,9 +13,17 @@ const { bookingInitiateLimiter } = require('../middleware/rateLimiter');
 
 const router = express.Router();
 
+const RAZORPAY_KEY = process.env.RAZORPAY_KEY_ID || '';
+const RAZORPAY_SECRET = process.env.RAZORPAY_KEY_SECRET || '';
+const razorpayConfigured =
+  RAZORPAY_KEY.startsWith('rzp_') &&
+  !RAZORPAY_KEY.includes('xxxx') &&
+  RAZORPAY_SECRET.length > 10 &&
+  !RAZORPAY_SECRET.includes('xxxx');
+
 const razorpay = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || 'dummy_key',
-  key_secret: process.env.RAZORPAY_KEY_SECRET || 'dummy_secret',
+  key_id: RAZORPAY_KEY || 'dummy_key',
+  key_secret: RAZORPAY_SECRET || 'dummy_secret',
 });
 
 // ── POST /bookings/initiate ──
@@ -98,7 +106,8 @@ router.post('/initiate',
 
       // 5. Create Razorpay order or handle CASH
       const bookingIdValue = generateBookingId();
-      const isCash = req.body.paymentMethod === 'CASH';
+      // Force CASH if Razorpay is not configured
+      const isCash = req.body.paymentMethod === 'CASH' || !razorpayConfigured;
       let orderId = 'CASH';
       let bookingStatus = 'PENDING';
       let rzpAmount = 0;

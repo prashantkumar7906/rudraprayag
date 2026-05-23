@@ -166,7 +166,7 @@ export default function BookPage() {
   // Step 3 state
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
-  const [paymentMethod, setPaymentMethod] = useState('ONLINE');
+  const [paymentMethod, setPaymentMethod] = useState('CASH');
 
   // Network error state
   const [networkError, setNetworkError] = useState('');
@@ -297,8 +297,7 @@ export default function BookPage() {
   return (
     <>
       <Navbar />
-      {/* Load Razorpay script */}
-      <script src="https://checkout.razorpay.com/v1/checkout.js" async />
+      {/* Online payments temporarily unavailable */}
 
       <main className="min-h-screen py-12" style={{ background: '#FFF0E0' }}>
         <div className="max-w-3xl mx-auto px-4 sm:px-6">
@@ -639,57 +638,18 @@ export default function BookPage() {
                   </div>
                 </div>
 
-                {/* Choose Payment Method */}
+                {/* Payment Method — Cash only */}
                 <div className="mb-6">
-                  <label className="block text-sm font-medium mb-3" style={{ color: '#2C1200' }}>
-                    Choose Payment Method *
-                  </label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <label
-                      className="block rounded-xl p-4 cursor-pointer transition-all border-2"
-                      style={{
-                        borderColor: paymentMethod === 'ONLINE' ? '#FF6600' : '#e0d0c0',
-                        background: paymentMethod === 'ONLINE' ? '#FFF0E0' : 'white',
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="ONLINE"
-                        checked={paymentMethod === 'ONLINE'}
-                        onChange={() => setPaymentMethod('ONLINE')}
-                        className="sr-only"
-                      />
-                      <div className="font-bold flex items-center gap-2" style={{ color: '#CC3300' }}>
-                        <span>💳</span> Pay Online (Securely)
-                      </div>
-                      <div className="text-xs mt-1" style={{ color: '#9a7050', lineHeight: 1.4 }}>
-                        Pay online instantly using UPI, Cards, Net Banking via Razorpay.
-                      </div>
-                    </label>
-
-                    <label
-                      className="block rounded-xl p-4 cursor-pointer transition-all border-2"
-                      style={{
-                        borderColor: paymentMethod === 'CASH' ? '#FF6600' : '#e0d0c0',
-                        background: paymentMethod === 'CASH' ? '#FFF0E0' : 'white',
-                      }}
-                    >
-                      <input
-                        type="radio"
-                        name="paymentMethod"
-                        value="CASH"
-                        checked={paymentMethod === 'CASH'}
-                        onChange={() => setPaymentMethod('CASH')}
-                        className="sr-only"
-                      />
-                      <div className="font-bold flex items-center gap-2" style={{ color: '#CC3300' }}>
-                        <span>💵</span> Pay Cash at counter
-                      </div>
-                      <div className="text-xs mt-1" style={{ color: '#9a7050', lineHeight: 1.4 }}>
-                        Reserve room now. Pay physically at the reception during check-in.
-                      </div>
-                    </label>
+                  <div
+                    className="rounded-xl p-4 border-2"
+                    style={{ borderColor: '#FF6600', background: '#FFF0E0' }}
+                  >
+                    <div className="font-bold flex items-center gap-2" style={{ color: '#CC3300' }}>
+                      <span>💵</span> Pay Cash at Counter
+                    </div>
+                    <div className="text-xs mt-1" style={{ color: '#9a7050', lineHeight: 1.4 }}>
+                      Reserve your room now. Pay at the reception during check-in.
+                    </div>
                   </div>
                 </div>
 
@@ -715,15 +675,9 @@ export default function BookPage() {
                   </button>
                 </div>
 
-                {paymentMethod === 'ONLINE' ? (
-                  <p className="text-center mt-4 text-xs" style={{ color: '#9a7050' }}>
-                    Secured by Razorpay — UPI, Cards, Net Banking accepted
-                  </p>
-                ) : (
-                  <p className="text-center mt-4 text-xs font-semibold" style={{ color: '#CC3300' }}>
-                    🙏 Hari Om — A physical stay token will be generated instantly for check-in.
-                  </p>
-                )}
+                <p className="text-center mt-4 text-xs font-semibold" style={{ color: '#CC3300' }}>
+                  🙏 Hari Om — A physical stay token will be generated instantly for check-in.
+                </p>
               </div>
             )}
           </div>
