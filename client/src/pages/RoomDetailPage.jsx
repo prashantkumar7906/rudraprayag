@@ -89,7 +89,8 @@ export default function RoomDetailPage() {
     setRoomLoading(true);
     api.get('/rooms')
       .then(res => {
-        const rooms = res.data.data || res.data;
+        const data = res.data?.data || res.data;
+        const rooms = Array.isArray(data) ? data : [];
         const found = rooms.find(r => r._id === roomId);
         if (!found) {
           navigate('/rooms', { replace: true });

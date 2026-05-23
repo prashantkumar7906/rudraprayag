@@ -47,8 +47,11 @@ export default function RoomsPage() {
     document.title = 'Rooms — Hariom Trust Organisation';
     window.scrollTo(0, 0);
     api.get('/rooms')
-      .then(res => setRooms(res.data.data || res.data))
-      .catch(() => {})
+      .then(res => {
+        const data = res.data?.data || res.data;
+        setRooms(Array.isArray(data) ? data : []);
+      })
+      .catch(() => setRooms([]))
       .finally(() => setLoading(false));
   }, []);
 

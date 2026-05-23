@@ -115,8 +115,7 @@ async function start() {
       console.log('[DB] Confirmed-booking unique index ensured');
     } catch (err) {
       console.error('[DB] ❌ Connection failed:', err.message);
-      if (process.env.NODE_ENV === 'production') process.exit(1);
-      console.warn('[DB] Continuing in degraded mode for local development…');
+      console.warn('[DB] Continuing in degraded mode using MockDB…');
       mongoose.set('bufferCommands', false);
       const { enableMockDb } = require('./src/utils/mockDb');
       enableMockDb();
