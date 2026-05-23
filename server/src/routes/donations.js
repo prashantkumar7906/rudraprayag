@@ -58,7 +58,7 @@ router.post('/initiate',
         donorEmail: donorEmail.trim().toLowerCase(),
         amount: amountInt,
         message: (message || '').trim(),
-        razorpayOrderId: orderId,
+        razorpayOrderId: isCash ? undefined : orderId,
         paymentMethod: isCash ? 'CASH' : 'ONLINE',
         status: donationStatus,
       });

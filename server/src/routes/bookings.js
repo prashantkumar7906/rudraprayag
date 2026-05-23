@@ -133,7 +133,7 @@ router.post('/initiate',
         idNumber: idNumber.trim(),
         specialRequests: (specialRequests || '').trim(),
         priceBreakdown: { baseAmount, gstAmount, totalAmount },
-        razorpayOrderId: orderId,
+        razorpayOrderId: isCash ? undefined : orderId,
         paymentMethod: isCash ? 'CASH' : 'ONLINE',
         status: bookingStatus,
       }], { session });
