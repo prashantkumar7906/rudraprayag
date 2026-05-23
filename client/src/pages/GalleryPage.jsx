@@ -45,7 +45,7 @@ export default function GalleryPage() {
             {IMGS.map((img,i)=>(
               <div key={i} onClick={()=>setLb(i)} role="button" tabIndex={0} onKeyDown={e=>e.key==='Enter'&&setLb(i)} aria-label={img.alt}
                 style={{height:290,borderRadius:16,overflow:'hidden',cursor:'pointer',position:'relative',background:'#F0E8DF'}}>
-                <img src={img.src} alt={img.alt} style={{width:'100%',height:'100%',objectFit:'cover',display:'block',transition:'transform 0.35s'}}
+                <img src={img.src} alt={img.alt} loading="lazy" style={{width:'100%',height:'100%',objectFit:'cover',display:'block',transition:'transform 0.35s'}}
                   onMouseEnter={e=>e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e=>e.currentTarget.style.transform='scale(1)'} />
                 <div style={{position:'absolute',inset:0,background:'rgba(232,82,10,0)',transition:'background 0.25s'}}
                   onMouseEnter={e=>e.currentTarget.style.background='rgba(232,82,10,0.18)'} onMouseLeave={e=>e.currentTarget.style.background='rgba(232,82,10,0)'} />

@@ -84,7 +84,7 @@ export default function HomePage() {
                   boxShadow: '0 20px 60px rgba(232,82,10,0.22)',
                   willChange: 'transform',
                 }}>
-                  <img src="/images/hero_temple.png" alt="Chitrakoot Dham at the sacred river confluence" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <img src="/images/hero_temple.png" alt="Chitrakoot Dham at the sacred river confluence" fetchpriority="high" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               </div>
             </div>
@@ -250,7 +250,7 @@ function RoomPreviewCard({ room }) {
   return (
     <div className="room-card">
       <div style={{ height: 200, overflow: 'hidden' }}>
-        <img src={room.image} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'} />
+        <img src={room.image} alt={room.name} loading="lazy" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'} />
       </div>
       <div style={{ padding: '1.2rem' }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.4rem' }}>
