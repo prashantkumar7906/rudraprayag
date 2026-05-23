@@ -4,16 +4,15 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
-const cron = require('node-cron');
 
 const roomsRouter    = require('./src/routes/rooms');
 const bookingsRouter = require('./src/routes/bookings');
 const donationsRouter = require('./src/routes/donations');
 const adminRouter    = require('./src/routes/admin');
 const { publicLimiter } = require('./src/middleware/rateLimiter');
-const Booking = require('./src/models/Booking');
+const Booking  = require('./src/models/Booking');
 const RoomType = require('./src/models/RoomType');
-const Admin = require('./src/models/Admin');
+const Admin    = require('./src/models/Admin');
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -30,7 +29,6 @@ const allowedOrigins = [
 
 app.use(cors({
   origin: (origin, callback) => {
-    // allow non-browser requests (Postman, cURL) and listed origins
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
     callback(new Error(`CORS: origin ${origin} not allowed`));
   },
@@ -38,12 +36,10 @@ app.use(cors({
 }));
 
 // ── Webhook routes: raw body MUST come before json() parser ──────────────────
-// These middlewares only activate for their specific path; all other routes
-// will fall through to the json() parser below.
 app.use('/api/v1/bookings/webhook', express.raw({ type: 'application/json' }));
 app.use('/api/v1/donations/webhook', express.raw({ type: 'application/json' }));
 
-// ── Body parsers (everything else) ───────────────────────────────────────────
+// ── Body parsers ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
 app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 
@@ -53,9 +49,109 @@ app.use(mongoSanitize());
 // ── Rate limiting (public) ────────────────────────────────────────────────────
 app.use('/api/', publicLimiter);
 
+// ── DB connection (lazy — safe for serverless cold starts) ────────────────────
+let dbReady = false;
+let dbInitializing = false;
+let dbInitQueue = [];
+
+async function initDb() {
+  const mongoUri = process.env.MONGODB_URI || '';
+  const isPlaceholder = mongoUri.includes('CHANGEME') || mongoUri === '';
+
+  if (isPlaceholder) {
+    console.warn('[DB] ⚠️  MONGODB_URI not configured — running MockDB.');
+    const { enableMockDb } = require('./src/utils/mockDb');
+    enableMockDb();
+    return;
+  }
+
+  if (mongoose.connection.readyState === 1) return; // already connected
+
+  try {
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
+    console.log('[DB] ✅ Connected to MongoDB Atlas');
+
+    // Ensure partial unique index for double-booking prevention
+    await Booking.collection.createIndex(
+      { roomTypeId: 1, checkIn: 1, checkOut: 1 },
+      { unique: true, partialFilterExpression: { status: 'CONFIRMED' } }
+    );
+
+    // Auto-seed rooms
+    const roomsCount = await RoomType.countDocuments();
+    if (roomsCount === 0) {
+      await RoomType.insertMany([
+        {
+          name: "Ganga View Deluxe Room",
+          capacity: 3,
+          pricePerNight: 2500,
+          gstRate: 0.12,
+          isActive: true,
+          description: "Beautiful room with a direct view of the sacred Ganga Sangam.",
+          blockedDates: []
+        },
+        {
+          name: "Sangam Standard Room",
+          capacity: 2,
+          pricePerNight: 1500,
+          gstRate: 0.12,
+          isActive: true,
+          description: "Comfortable standard room close to the temple ghats.",
+          blockedDates: []
+        },
+        {
+          name: "Family Pilgrim Suite",
+          capacity: 6,
+          pricePerNight: 4000,
+          gstRate: 0.12,
+          isActive: true,
+          description: "Spacious suite designed for families and group pilgrims.",
+          blockedDates: []
+        }
+      ]);
+      console.log('[DB] ✅ Default room types seeded.');
+    }
+
+    // Auto-seed admin
+    const adminCount = await Admin.countDocuments();
+    if (adminCount === 0) {
+      const bcrypt = require('bcryptjs');
+      const passwordHash = await bcrypt.hash('Password@rudrprayad', 10);
+      await Admin.create({ email: 'owner@dharamshala.com', passwordHash });
+      console.log('[DB] ✅ Default admin seeded.');
+    }
+  } catch (err) {
+    console.error('[DB] ❌ Connection failed:', err.message);
+    const { enableMockDb } = require('./src/utils/mockDb');
+    enableMockDb();
+  }
+}
+
+// ── Middleware: ensure DB is ready before any API request ─────────────────────
+app.use('/api', async (req, res, next) => {
+  if (dbReady) return next();
+
+  if (!dbInitializing) {
+    dbInitializing = true;
+    try {
+      await initDb();
+    } finally {
+      dbReady = true;
+      dbInitializing = false;
+      // flush queued requests
+      dbInitQueue.forEach(fn => fn());
+      dbInitQueue = [];
+    }
+    return next();
+  }
+
+  // Another request is already initializing — queue this one
+  dbInitQueue.push(next);
+});
+
 // ── Health check ──────────────────────────────────────────────────────────────
 app.get('/health', (_req, res) =>
-  res.json({ status: 'ok', timestamp: new Date().toISOString() })
+  res.json({ status: 'ok', timestamp: new Date().toISOString(), dbReady })
 );
 
 // ── Routes ────────────────────────────────────────────────────────────────────
@@ -79,111 +175,33 @@ app.use((err, req, res, _next) => {
   });
 });
 
-// ── Cron: expire stale PENDING bookings every 30 min ─────────────────────────
-cron.schedule('*/30 * * * *', async () => {
-  try {
-    const cutoff = new Date(Date.now() - 45 * 60 * 1000);
-    const { modifiedCount } = await Booking.updateMany(
-      { status: 'PENDING', createdAt: { $lt: cutoff } },
-      { $set: { status: 'EXPIRED' } }
-    );
-    if (modifiedCount > 0)
-      console.log(`[Cron] Expired ${modifiedCount} stale booking(s)`);
-  } catch (err) {
-    console.error('[Cron] Error:', err.message);
-  }
-});
-
-// ── DB + server start ─────────────────────────────────────────────────────────
-async function start() {
-  const mongoUri = process.env.MONGODB_URI || '';
-  const isPlaceholder = mongoUri.includes('CHANGEME') || mongoUri === '';
-
-  if (isPlaceholder) {
-    console.warn('[DB] ⚠️  MONGODB_URI not configured — running without database.');
-    console.warn('[DB]    Set a real MongoDB Atlas URI in server/.env to enable full functionality.');
-    const { enableMockDb } = require('./src/utils/mockDb');
-    enableMockDb();
-  } else {
+// ── Cron (only in non-serverless environments) ────────────────────────────────
+if (!process.env.VERCEL) {
+  const cron = require('node-cron');
+  cron.schedule('*/30 * * * *', async () => {
     try {
-      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
-      console.log('[DB] ✅ Connected to MongoDB Atlas');
-
-      // Ensure partial unique index for double-booking prevention
-      await Booking.collection.createIndex(
-        { roomTypeId: 1, checkIn: 1, checkOut: 1 },
-        { unique: true, partialFilterExpression: { status: 'CONFIRMED' } }
+      const cutoff = new Date(Date.now() - 45 * 60 * 1000);
+      const { modifiedCount } = await Booking.updateMany(
+        { status: 'PENDING', createdAt: { $lt: cutoff } },
+        { $set: { status: 'EXPIRED' } }
       );
-      console.log('[DB] Confirmed-booking unique index ensured');
-
-      // Auto-seed rooms if database has 0 room types
-      const roomsCount = await RoomType.countDocuments();
-      if (roomsCount === 0) {
-        console.log('[DB] ⚠️  No rooms found in database — seeding default room types…');
-        const defaultRooms = [
-          {
-            name: "Ganga View Deluxe Room",
-            capacity: 3,
-            pricePerNight: 2500,
-            gstRate: 0.12,
-            isActive: true,
-            description: "Beautiful room with a direct view of the sacred Ganga Sangam.",
-            blockedDates: []
-          },
-          {
-            name: "Sangam Standard Room",
-            capacity: 2,
-            pricePerNight: 1500,
-            gstRate: 0.12,
-            isActive: true,
-            description: "Comfortable standard room close to the temple ghats.",
-            blockedDates: []
-          },
-          {
-            name: "Family Pilgrim Suite",
-            capacity: 6,
-            pricePerNight: 4000,
-            gstRate: 0.12,
-            isActive: true,
-            description: "Spacious suite designed for families and group pilgrims.",
-            blockedDates: []
-          }
-        ];
-        await RoomType.insertMany(defaultRooms);
-        console.log('[DB] ✅ Default room types seeded successfully!');
-      }
-
-      // Auto-seed admin if database has 0 admins
-      const adminCount = await Admin.countDocuments();
-      if (adminCount === 0) {
-        console.log('[DB] ⚠️  No admin account found in database — seeding default admin…');
-        const bcrypt = require('bcryptjs');
-        const passwordHash = await bcrypt.hash('Password@rudrprayad', 10);
-        await Admin.create({
-          email: 'owner@dharamshala.com',
-          passwordHash
-        });
-        console.log('[DB] ✅ Default admin account seeded successfully!');
-      }
+      if (modifiedCount > 0)
+        console.log(`[Cron] Expired ${modifiedCount} stale booking(s)`);
     } catch (err) {
-      console.error('[DB] ❌ Connection failed:', err.message);
-      console.warn('[DB] Continuing in degraded mode using MockDB…');
-      mongoose.set('bufferCommands', false);
-      const { enableMockDb } = require('./src/utils/mockDb');
-      enableMockDb();
+      console.error('[Cron] Error:', err.message);
     }
-  }
+  });
+}
 
-  if (!process.env.VERCEL) {
+// ── Local dev server start ────────────────────────────────────────────────────
+if (!process.env.VERCEL) {
+  initDb().then(() => {
     app.listen(PORT, () => {
       console.log(`\n🚀 Server running → http://localhost:${PORT}`);
       console.log(`   Health check  → http://localhost:${PORT}/health`);
       console.log(`   Environment  : ${process.env.NODE_ENV || 'development'}\n`);
     });
-  } else {
-    console.log('[Server] Running as a Vercel Serverless Function');
-  }
+  });
 }
 
-start();
 module.exports = app;
