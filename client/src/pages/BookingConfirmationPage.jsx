@@ -8,6 +8,7 @@ import { formatINR, formatDate, generateBookingSummaryText } from '../utils/help
 export default function BookingConfirmationPage() {
   const { bookingId } = useParams();
   const [booking, setBooking] = useState(null);
+  const [token, setToken] = useState(null);
   const [status, setStatus] = useState('polling'); // polling | confirmed | timeout | error
   const [error, setError] = useState('');
   const pollRef = useRef(null);
@@ -20,7 +21,9 @@ export default function BookingConfirmationPage() {
       try {
         const res = await api.get(`/bookings/${bookingId}`);
         const b = res.data.data || res.data;
+        const t = res.data.token;
         setBooking(b);
+        setToken(t);
         if (b.status === 'CONFIRMED') {
           setStatus('confirmed');
           clearInterval(pollRef.current);
@@ -104,10 +107,12 @@ export default function BookingConfirmationPage() {
                   </svg>
                 </div>
                 <h1 style={{ color: 'white', fontFamily: 'Noto Serif', fontSize: '1.8rem', fontWeight: 700 }}>
-                  Booking Confirmed! 🙏
+                  {booking.paymentMethod === 'CASH' ? 'Stay Reserved! 🙏' : 'Booking Confirmed! 🙏'}
                 </h1>
                 <p style={{ color: 'rgba(255,255,255,0.85)', marginTop: '0.5rem' }}>
-                  हरि ॐ — Your stay is reserved
+                  {booking.paymentMethod === 'CASH' 
+                    ? 'हरि ॐ — Pay Cash on Arrival' 
+                    : 'हरि ॐ — Your stay is reserved'}
                 </p>
               </div>
 
@@ -122,6 +127,44 @@ export default function BookingConfirmationPage() {
                     {booking.bookingId}
                   </div>
                 </div>
+
+                {/* Stay Token Card */}
+                {token && (
+                  <div
+                    className="rounded-xl p-5 mb-6 text-center shadow-inner relative overflow-hidden"
+                    style={{
+                      background: 'linear-gradient(135deg, #FFF8F0 0%, #FFF0E0 100%)',
+                      border: '3px dashed #FF6600',
+                    }}
+                  >
+                    {/* Background graphic */}
+                    <div style={{ position: 'absolute', right: -15, bottom: -15, fontSize: '5rem', opacity: 0.05, transform: 'rotate(-15deg)', pointerEvents: 'none' }}>
+                      ॐ
+                    </div>
+                    <div style={{ color: '#CC3300', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', uppercase: true, marginBottom: '0.25rem' }}>
+                      🔑 SACRED STAY RECEIPT TOKEN
+                    </div>
+                    <div style={{ color: '#2C1200', fontWeight: 800, fontSize: '1.7rem', fontFamily: 'monospace', letterSpacing: '0.05em', margin: '0.25rem 0' }}>
+                      {token.tokenNumber}
+                    </div>
+                    <div className="flex justify-center gap-2 mt-2 flex-wrap">
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background: '#FF660020', color: '#FF6600' }}>
+                        Stay Token
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background: '#16a34a20', color: '#16a34a' }}>
+                        {token.status}
+                      </span>
+                      <span className="px-2.5 py-0.5 rounded-full text-xs font-bold" style={{ background: '#0055AA20', color: '#0055AA' }}>
+                        {token.paymentMethod} Payment
+                      </span>
+                    </div>
+                    <p style={{ color: '#9a7050', fontSize: '0.8rem', marginTop: '0.6rem', lineHeight: 1.4 }}>
+                      {token.paymentMethod === 'CASH' 
+                        ? '🙏 Please present this token along with your cash payment at the check-in desk.'
+                        : '✅ Keep this stay receipt token for check-in verification upon arrival.'}
+                    </p>
+                  </div>
+                )}
 
                 <div className="space-y-3 text-sm">
                   {[
@@ -150,7 +193,9 @@ export default function BookingConfirmationPage() {
                     <span>{formatINR(booking.priceBreakdown?.gstAmount)}</span>
                   </div>
                   <div className="flex justify-between font-bold text-base">
-                    <span style={{ color: '#CC3300' }}>Total Paid</span>
+                    <span style={{ color: '#CC3300' }}>
+                      {booking.paymentMethod === 'CASH' ? 'To Pay at Desk' : 'Total Paid'}
+                    </span>
                     <span style={{ color: '#FF6600' }}>{formatINR(booking.priceBreakdown?.totalAmount)}</span>
                   </div>
                 </div>
@@ -158,7 +203,7 @@ export default function BookingConfirmationPage() {
                 {/* Email note */}
                 <div className="mt-6 p-4 rounded-xl text-center" style={{ background: '#E8F0FF', border: '2px solid #0055AA20' }}>
                   <p style={{ color: '#0055AA', fontSize: '0.9rem' }}>
-                    📧 A confirmation email has been sent to <strong>{booking.guestEmail}</strong>
+                    📧 A stay reservation details email has been sent to <strong>{booking.guestEmail}</strong>
                   </p>
                 </div>
 

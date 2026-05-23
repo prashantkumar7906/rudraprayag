@@ -3,7 +3,8 @@ const crypto = require('crypto');
 const { body, validationResult } = require('express-validator');
 const Razorpay = require('razorpay');
 const Donation = require('../models/Donation');
-const { generateDonationId } = require('../utils/idGenerator');
+const { generateDonationId, generateTokenId } = require('../utils/idGenerator');
+const Token = require('../models/Token');
 const { sendDonationReceipt } = require('../email/templates');
 const { verifyAdminToken } = require('../middleware/verifyAdminToken');
 const { donationInitiateLimiter } = require('../middleware/rateLimiter');
@@ -28,17 +29,28 @@ router.post('/initiate',
     const errors = validationResult(req);
     if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
 
-    const { amount, donorName, donorEmail, message } = req.body;
+    const { amount, donorName, donorEmail, message, phone } = req.body;
     const amountInt = Math.round(Number(amount));
+    const isCash = req.body.paymentMethod === 'CASH';
 
     try {
       const donationId = generateDonationId();
-      const order = await razorpay.orders.create({
-        amount: amountInt * 100, // paise
-        currency: 'INR',
-        receipt: donationId,
-        notes: { donationId, donorName, donorEmail },
-      });
+      let orderId = 'CASH';
+      let donationStatus = 'PENDING';
+      let rzpAmount = amountInt * 100;
+
+      if (isCash) {
+        donationStatus = 'CONFIRMED';
+      } else {
+        const order = await razorpay.orders.create({
+          amount: amountInt * 100, // paise
+          currency: 'INR',
+          receipt: donationId,
+          notes: { donationId, donorName, donorEmail },
+        });
+        orderId = order.id;
+        rzpAmount = order.amount;
+      }
 
       const donation = await Donation.create({
         donationId,
@@ -46,15 +58,36 @@ router.post('/initiate',
         donorEmail: donorEmail.trim().toLowerCase(),
         amount: amountInt,
         message: (message || '').trim(),
-        razorpayOrderId: order.id,
-        status: 'PENDING',
+        razorpayOrderId: orderId,
+        paymentMethod: isCash ? 'CASH' : 'ONLINE',
+        status: donationStatus,
       });
+
+      // Generate Token immediately if CASH
+      if (isCash) {
+        const tokenNum = generateTokenId();
+        await Token.create({
+          tokenNumber: tokenNum,
+          type: 'DONATION',
+          donationId: donation._id,
+          amount: amountInt,
+          name: donation.donorName,
+          email: donation.donorEmail,
+          phone: phone || '',
+          paymentMethod: 'CASH',
+          status: 'ACTIVE'
+        });
+
+        // Trigger confirmation email for CASH donation
+        sendDonationReceipt(donation).catch(e => console.error('[Email] Donation receipt email failed:', e.message));
+      }
 
       res.status(201).json({
         success: true,
         donationId: donation.donationId,
-        razorpayOrderId: order.id,
-        amount: order.amount,
+        paymentMethod: isCash ? 'CASH' : 'ONLINE',
+        razorpayOrderId: isCash ? null : orderId,
+        amount: rzpAmount,
         currency: 'INR',
         keyId: process.env.RAZORPAY_KEY_ID,
       });
@@ -95,6 +128,23 @@ router.post('/webhook',
           donation.razorpayPaymentId = payment.id;
           await donation.save();
 
+          // Idempotent Token creation for ONLINE donation
+          const existingToken = await Token.findOne({ donationId: donation._id });
+          if (!existingToken) {
+            const tokenNum = generateTokenId();
+            await Token.create({
+              tokenNumber: tokenNum,
+              type: 'DONATION',
+              donationId: donation._id,
+              amount: donation.amount,
+              name: donation.donorName,
+              email: donation.donorEmail,
+              paymentMethod: 'ONLINE',
+              status: 'ACTIVE'
+            });
+            console.log('[Webhook] Generated online donation token:', tokenNum);
+          }
+
           const emailSent = await sendDonationReceipt(donation);
           if (emailSent) {
             donation.emailSentAt = new Date();
@@ -110,6 +160,20 @@ router.post('/webhook',
     res.json({ status: 'ok' });
   }
 );
+
+// ── GET /donations/:donationId — public status check ──
+router.get('/:donationId', async (req, res) => {
+  try {
+    const donation = await Donation.findOne({ donationId: req.params.donationId })
+      .select('-__v');
+    if (!donation) return res.status(404).json({ error: 'Donation not found.' });
+
+    const token = await Token.findOne({ donationId: donation._id }).select('-__v');
+    res.json({ success: true, data: donation, token });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch donation.' });
+  }
+});
 
 // ── GET /admin/donations — Admin: list donations ──
 router.get('/admin/list',

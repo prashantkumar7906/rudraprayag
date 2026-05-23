@@ -166,6 +166,7 @@ export default function BookPage() {
   // Step 3 state
   const [paying, setPaying] = useState(false);
   const [payError, setPayError] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('ONLINE');
 
   // Network error state
   const [networkError, setNetworkError] = useState('');
@@ -251,8 +252,14 @@ export default function BookPage() {
         idNumber: idNumber.trim(),
         specialRequests: specialRequests.trim(),
         website: honeypot, // honeypot
+        paymentMethod: paymentMethod,
       });
-      const { bookingId, razorpayOrderId, amount, keyId } = res.data;
+      const { bookingId, paymentMethod: returnedMethod, razorpayOrderId, amount, keyId } = res.data;
+
+      if (returnedMethod === 'CASH') {
+        navigate(`/booking-confirmation/${bookingId}`);
+        return;
+      }
 
       const rzp = new window.Razorpay({
         key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
@@ -632,6 +639,60 @@ export default function BookPage() {
                   </div>
                 </div>
 
+                {/* Choose Payment Method */}
+                <div className="mb-6">
+                  <label className="block text-sm font-medium mb-3" style={{ color: '#2C1200' }}>
+                    Choose Payment Method *
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <label
+                      className="block rounded-xl p-4 cursor-pointer transition-all border-2"
+                      style={{
+                        borderColor: paymentMethod === 'ONLINE' ? '#FF6600' : '#e0d0c0',
+                        background: paymentMethod === 'ONLINE' ? '#FFF0E0' : 'white',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="ONLINE"
+                        checked={paymentMethod === 'ONLINE'}
+                        onChange={() => setPaymentMethod('ONLINE')}
+                        className="sr-only"
+                      />
+                      <div className="font-bold flex items-center gap-2" style={{ color: '#CC3300' }}>
+                        <span>💳</span> Pay Online (Securely)
+                      </div>
+                      <div className="text-xs mt-1" style={{ color: '#9a7050', lineHeight: 1.4 }}>
+                        Pay online instantly using UPI, Cards, Net Banking via Razorpay.
+                      </div>
+                    </label>
+
+                    <label
+                      className="block rounded-xl p-4 cursor-pointer transition-all border-2"
+                      style={{
+                        borderColor: paymentMethod === 'CASH' ? '#FF6600' : '#e0d0c0',
+                        background: paymentMethod === 'CASH' ? '#FFF0E0' : 'white',
+                      }}
+                    >
+                      <input
+                        type="radio"
+                        name="paymentMethod"
+                        value="CASH"
+                        checked={paymentMethod === 'CASH'}
+                        onChange={() => setPaymentMethod('CASH')}
+                        className="sr-only"
+                      />
+                      <div className="font-bold flex items-center gap-2" style={{ color: '#CC3300' }}>
+                        <span>💵</span> Pay Cash at counter
+                      </div>
+                      <div className="text-xs mt-1" style={{ color: '#9a7050', lineHeight: 1.4 }}>
+                        Reserve room now. Pay physically at the reception during check-in.
+                      </div>
+                    </label>
+                  </div>
+                </div>
+
                 {payError && (
                   <div className="p-4 rounded-xl mb-4" style={{ background: '#fee2e2', border: '2px solid #CC3300' }}>
                     <p style={{ color: '#991b1b' }}>{payError}</p>
@@ -650,13 +711,19 @@ export default function BookPage() {
                   <button className="btn-bhagwa flex-1 text-lg" onClick={handlePayNow} disabled={paying}>
                     {paying ? (
                       <><span className="spinner spinner-dark" /> Processing...</>
-                    ) : `Pay ${formatINR(grandTotal)}`}
+                    ) : paymentMethod === 'CASH' ? 'Confirm Booking (Cash) 🙏' : `Pay ${formatINR(grandTotal)}`}
                   </button>
                 </div>
 
-                <p className="text-center mt-4 text-xs" style={{ color: '#9a7050' }}>
-                  Secured by Razorpay — UPI, Cards, Net Banking accepted
-                </p>
+                {paymentMethod === 'ONLINE' ? (
+                  <p className="text-center mt-4 text-xs" style={{ color: '#9a7050' }}>
+                    Secured by Razorpay — UPI, Cards, Net Banking accepted
+                  </p>
+                ) : (
+                  <p className="text-center mt-4 text-xs font-semibold" style={{ color: '#CC3300' }}>
+                    🙏 Hari Om — A physical stay token will be generated instantly for check-in.
+                  </p>
+                )}
               </div>
             )}
           </div>

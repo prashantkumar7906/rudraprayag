@@ -2,21 +2,54 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import api from '../api/axios';
 
-const ROOMS = [
-  { id: 'non-ac', name: 'Non AC Room', hindi: 'गैर-एसी कक्ष', capacity: 'Up to 2', view: 'Free WiFi',     price: 800,  image: '/images/non_ac_room_1.jpg', desc: 'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the Sangam.' },
-  { id: 'ac',     name: 'AC Room',     hindi: 'एसी कक्ष',      capacity: 'Up to 3', view: 'Balcony View', price: 1500, image: '/images/ac_room_1.jpg',   desc: 'Spacious air-conditioned room with a private balcony overlooking the valley and the cool Himalayan breeze.' },
-];
+// Room amenities/images by name keyword match (for display enrichment)
+const ROOM_EXTRAS = {
+  default: {
+    image: '/images/ac_room_1.jpg',
+    amenities: ['Free WiFi', 'Attached Bath', 'Daily Housekeeping'],
+  },
+  'ganga': {
+    image: '/images/ac_room_1.jpg',
+    hindi: 'गंगा व्यू डीलक्स',
+    amenities: ['Balcony View', 'Free WiFi', 'Tea/Coffee', 'Attached Bath', 'Daily Housekeeping'],
+  },
+  'sangam': {
+    image: '/images/non_ac_room_1.jpg',
+    hindi: 'संगम स्टैंडर्ड',
+    amenities: ['Free WiFi', 'Attached Bath', 'Daily Housekeeping'],
+  },
+  'family': {
+    image: '/images/ac_room_2.jpg',
+    hindi: 'पारिवारिक सुइट',
+    amenities: ['AC', 'Balcony View', 'Free WiFi', 'Tea/Coffee', 'Attached Bath', 'Daily Housekeeping'],
+  },
+};
 
+function getRoomExtras(name = '') {
+  const lower = name.toLowerCase();
+  for (const key of Object.keys(ROOM_EXTRAS)) {
+    if (key !== 'default' && lower.includes(key)) return ROOM_EXTRAS[key];
+  }
+  return ROOM_EXTRAS.default;
+}
 
 export default function RoomsPage() {
   const navigate = useNavigate();
   const [checkIn, setCheckIn] = useState('');
   const [checkOut, setCheckOut] = useState('');
+  const [rooms, setRooms] = useState([]);
+  const [loading, setLoading] = useState(true);
   const today = new Date().toISOString().split('T')[0];
-  useEffect(() => { 
-    document.title = 'Rooms — Hari Om Trust, Chitrakoot Dham'; 
+
+  useEffect(() => {
+    document.title = 'Rooms — Hariom Trust Organisation';
     window.scrollTo(0, 0);
+    api.get('/rooms')
+      .then(res => setRooms(res.data.data || res.data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   return (
@@ -27,8 +60,12 @@ export default function RoomsPage() {
 
           <div style={{ marginBottom: '2.5rem' }}>
             <div className="eyebrow" style={{ marginBottom: '0.5rem' }}>Our Rooms</div>
-            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.8rem,3.5vw,2.6rem)', color: '#1A0A00', fontWeight: 700, marginBottom: '0.25rem' }}>Choose your nest by the Sangam</h1>
-            <p style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', color: '#C4581A', fontSize: '0.95rem' }}>संगम के निकट अपना विश्राम-स्थल चुनें</p>
+            <h1 style={{ fontFamily: 'Playfair Display, serif', fontSize: 'clamp(1.8rem,3.5vw,2.6rem)', color: '#1A0A00', fontWeight: 700, marginBottom: '0.25rem' }}>
+              Choose your nest by the Sangam
+            </h1>
+            <p style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', color: '#C4581A', fontSize: '0.95rem' }}>
+              संगम के निकट अपना विश्राम-स्थल चुनें
+            </p>
           </div>
 
           {/* Search bar */}
@@ -52,30 +89,60 @@ export default function RoomsPage() {
           </div>
 
           {/* Room cards */}
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
-            {ROOMS.map(room => (
-              <div key={room.id} className="room-card">
-                <div style={{ height: 230, overflow: 'hidden' }}>
-                  <img src={room.image} alt={room.name} style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s' }} onMouseEnter={e => e.currentTarget.style.transform='scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform='scale(1)'} />
-                </div>
-                <div style={{ padding: '1.3rem' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.4rem' }}>
-                    <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#1A0A00' }}>{room.name}</h3>
-                    <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.77rem', color: '#E8520A' }}>{room.hindi}</span>
+          {loading ? (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {[1, 2, 3].map(i => (
+                <div key={i} className="skeleton" style={{ height: 380, borderRadius: 16 }} />
+              ))}
+            </div>
+          ) : (
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              {rooms.map(room => {
+                const extras = getRoomExtras(room.name);
+                return (
+                  <div key={room._id} className="room-card">
+                    <div style={{ height: 230, overflow: 'hidden' }}>
+                      <img
+                        src={extras.image}
+                        alt={room.name}
+                        style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block', transition: 'transform 0.35s' }}
+                        onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'}
+                        onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
+                      />
+                    </div>
+                    <div style={{ padding: '1.3rem' }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '0.4rem' }}>
+                        <h3 style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.1rem', fontWeight: 700, color: '#1A0A00' }}>{room.name}</h3>
+                        {extras.hindi && (
+                          <span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.77rem', color: '#E8520A' }}>{extras.hindi}</span>
+                        )}
+                      </div>
+                      <p style={{ fontSize: '0.83rem', color: '#3D2010', lineHeight: 1.65, marginBottom: '0.9rem' }}>{room.description}</p>
+                      <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.1rem' }}>
+                        <span className="amenity-pill">Capacity: {room.capacity} Guests</span>
+                        {(extras.amenities || []).slice(0, 2).map(a => (
+                          <span key={a} className="amenity-pill">{a}</span>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ color: '#E8520A', fontWeight: 700, fontSize: '0.97rem' }}>
+                          FROM ₹{room.pricePerNight.toLocaleString('en-IN')}
+                          <span style={{ fontWeight: 400, fontSize: '0.78rem', color: '#C4581A' }}> / night</span>
+                        </div>
+                        <button
+                          onClick={() => navigate(`/rooms/${room._id}`, { state: { checkIn, checkOut } })}
+                          className="btn-primary"
+                          style={{ fontSize: '0.82rem', padding: '0.5rem 1.1rem' }}
+                        >
+                          Book →
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <p style={{ fontSize: '0.83rem', color: '#3D2010', lineHeight: 1.65, marginBottom: '0.9rem' }}>{room.desc}</p>
-                  <div style={{ display: 'flex', gap: '0.4rem', flexWrap: 'wrap', marginBottom: '1.1rem' }}>
-                    <span className="amenity-pill">Capacity: {room.capacity}</span>
-                    <span className="amenity-pill">{room.view}</span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <div style={{ color: '#E8520A', fontWeight: 700, fontSize: '0.97rem' }}>FROM ₹{room.price.toLocaleString('en-IN')}<span style={{ fontWeight: 400, fontSize: '0.78rem', color: '#C4581A' }}> / night</span></div>
-                    <button onClick={() => navigate(`/rooms/${room.id}`, { state: { checkIn, checkOut } })} className="btn-primary" style={{ fontSize: '0.82rem', padding: '0.5rem 1.1rem' }}>Book →</button>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </main>
       <Footer />

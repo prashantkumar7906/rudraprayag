@@ -100,9 +100,11 @@ async function start() {
   if (isPlaceholder) {
     console.warn('[DB] ⚠️  MONGODB_URI not configured — running without database.');
     console.warn('[DB]    Set a real MongoDB Atlas URI in server/.env to enable full functionality.');
+    const { enableMockDb } = require('./src/utils/mockDb');
+    enableMockDb();
   } else {
     try {
-      await mongoose.connect(mongoUri);
+      await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 5000 });
       console.log('[DB] ✅ Connected to MongoDB Atlas');
 
       // Ensure partial unique index for double-booking prevention
@@ -115,6 +117,9 @@ async function start() {
       console.error('[DB] ❌ Connection failed:', err.message);
       if (process.env.NODE_ENV === 'production') process.exit(1);
       console.warn('[DB] Continuing in degraded mode for local development…');
+      mongoose.set('bufferCommands', false);
+      const { enableMockDb } = require('./src/utils/mockDb');
+      enableMockDb();
     }
   }
 

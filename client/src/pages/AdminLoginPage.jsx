@@ -10,7 +10,7 @@ export default function AdminLoginPage() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    document.title = 'Admin Login — Devprayag Dharamshala';
+    document.title = 'Admin Login — Hariom Trust Organisation';
     const token = localStorage.getItem('adminToken');
     if (token) navigate('/admin/dashboard');
   }, [navigate]);
@@ -46,7 +46,7 @@ export default function AdminLoginPage() {
           >
             <div style={{ fontSize: '3rem', color: '#FF6600', marginBottom: '0.5rem' }}>ॐ</div>
             <h1 style={{ color: '#FF6600', fontFamily: 'Noto Serif', fontWeight: 700, fontSize: '1.4rem', marginBottom: '0.25rem' }}>
-              देवप्रयाग धर्मशाला
+              Hariom Trust Organisation
             </h1>
             <p style={{ color: '#F9A86A', fontSize: '0.85rem' }}>Admin Portal</p>
           </div>

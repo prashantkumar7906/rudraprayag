@@ -20,6 +20,7 @@ export default function DonatePage() {
   const [form, setForm] = useState({ name:'', email:'', phone:'', purpose:PURPOSES[0], msg:'' });
   const [errors, setErrors] = useState({});
   const [paying, setPaying] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState('ONLINE');
 
   const effective = amt ? Number(amt) : sel;
   useEffect(() => { document.title = 'Donate — Hari Om Trust · Rudraprayag'; }, []);
@@ -39,10 +40,37 @@ export default function DonatePage() {
     const errs=validate(); if(Object.keys(errs).length) return setErrors(errs);
     setErrors({}); setPaying(true);
     try {
-      const res = await api.post('/donations/initiate',{ amount:effective, donorName:form.name.trim(), donorEmail:form.email.trim(), message:`${form.purpose} — ${form.msg.trim()}` });
-      const {donationId,razorpayOrderId,amount,keyId}=res.data;
-      new window.Razorpay({ key:keyId||import.meta.env.VITE_RAZORPAY_KEY_ID, amount, currency:'INR', name:'Devprayag Dharamshala Trust', description:'Donation — Dharma Seva', order_id:razorpayOrderId, prefill:{name:form.name,email:form.email}, theme:{color:'#E8520A'}, handler:()=>navigate(`/thank-you?amount=${effective}&ref=${donationId}&name=${encodeURIComponent(form.name)}`), modal:{ondismiss:()=>setPaying(false)} }).open();
-    } catch(err) { setErrors({submit:err.message||'Donation failed. Try again.'}); setPaying(false); }
+      const res = await api.post('/donations/initiate', {
+        amount: effective,
+        donorName: form.name.trim(),
+        donorEmail: form.email.trim(),
+        phone: form.phone.trim(),
+        message: `${form.purpose} — ${form.msg.trim()}`,
+        paymentMethod: paymentMethod
+      });
+      const { donationId, paymentMethod: returnedMethod, razorpayOrderId, amount, keyId } = res.data;
+
+      if (returnedMethod === 'CASH') {
+        navigate(`/thank-you?amount=${effective}&ref=${donationId}&name=${encodeURIComponent(form.name)}&paymentMethod=CASH`);
+        return;
+      }
+
+      new window.Razorpay({
+        key: keyId || import.meta.env.VITE_RAZORPAY_KEY_ID,
+        amount,
+        currency: 'INR',
+        name: 'Devprayag Dharamshala Trust',
+        description: 'Donation — Dharma Seva',
+        order_id: razorpayOrderId,
+        prefill: { name: form.name, email: form.email, contact: form.phone },
+        theme: { color: '#E8520A' },
+        handler: () => navigate(`/thank-you?amount=${effective}&ref=${donationId}&name=${encodeURIComponent(form.name)}`),
+        modal: { ondismiss: () => setPaying(false) }
+      }).open();
+    } catch(err) {
+      setErrors({ submit: err.message || 'Donation failed. Try again.' });
+      setPaying(false);
+    }
   };
 
   return (
@@ -162,12 +190,66 @@ export default function DonatePage() {
                 </div>
               </div>
 
-              {errors.submit&&<p className="error-text" style={{textAlign:'center',marginBottom:'0.75rem'}}>{errors.submit}</p>}
+              {/* Payment Method Selector */}
+              <div style={{marginBottom:'1.5rem', marginTop:'1.5rem'}}>
+                <label style={{display:'block',fontSize:'0.82rem',fontWeight:600,color:'#3D2010',marginBottom:'0.5rem'}}>Payment Method / भुगतान का प्रकार</label>
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:'1rem'}}>
+                  <label
+                    style={{
+                      display:'block',
+                      borderRadius:12,
+                      padding:'0.8rem 1rem',
+                      cursor:'pointer',
+                      border:paymentMethod === 'ONLINE' ? '2px solid #E8520A' : '2px solid #E4D0C0',
+                      background:paymentMethod === 'ONLINE' ? '#FFF0E0' : '#fff',
+                      transition:'all 0.2s',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="ONLINE"
+                      checked={paymentMethod === 'ONLINE'}
+                      onChange={() => setPaymentMethod('ONLINE')}
+                      style={{display:'none'}}
+                    />
+                    <div style={{fontWeight:700,color:'#1A0A00',fontSize:'0.9rem'}}>Pay Online</div>
+                    <div style={{fontSize:'0.75rem',color:'#6B3A1F',marginTop:3}}>UPI, Cards, Netbanking</div>
+                  </label>
 
+                  <label
+                    style={{
+                      display:'block',
+                      borderRadius:12,
+                      padding:'0.8rem 1rem',
+                      cursor:'pointer',
+                      border:paymentMethod === 'CASH' ? '2px solid #E8520A' : '2px solid #E4D0C0',
+                      background:paymentMethod === 'CASH' ? '#FFF0E0' : '#fff',
+                      transition:'all 0.2s',
+                    }}
+                  >
+                    <input
+                      type="radio"
+                      name="paymentMethod"
+                      value="CASH"
+                      checked={paymentMethod === 'CASH'}
+                      onChange={() => setPaymentMethod('CASH')}
+                      style={{display:'none'}}
+                    />
+                    <div style={{fontWeight:700,color:'#1A0A00',fontSize:'0.9rem'}}>Cash Donation</div>
+                    <div style={{fontSize:'0.75rem',color:'#6B3A1F',marginTop:3}}>Pledge cash at Dharamshala</div>
+                  </label>
+                </div>
+              </div>
+
+              {errors.submit&&<p className="error-text" style={{textAlign:'center',marginBottom:'0.75rem'}}>{errors.submit}</p>}
+ 
               <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',flexWrap:'wrap',gap:'0.75rem'}}>
-                <p style={{fontSize:'0.75rem',color:'#C4581A',margin:0}}>Secure checkout &middot; Razorpay</p>
+                <p style={{fontSize:'0.75rem',color:'#C4581A',margin:0}}>
+                  {paymentMethod === 'ONLINE' ? 'Secure checkout · Razorpay' : 'Pledge token will be generated'}
+                </p>
                 <button className="btn-primary" onClick={handleDonate} disabled={paying} style={{fontSize:'0.9rem',padding:'0.75rem 1.75rem'}}>
-                  {paying?<><span className="spinner" style={{marginRight:6}}/>Processing…</>:'Donate / दान करें'}
+                  {paying?<><span className="spinner" style={{marginRight:6}}/>Processing…</>:paymentMethod === 'CASH' ? 'Confirm Pledge' : 'Donate / दान करें'}
                 </button>
               </div>
             </div>

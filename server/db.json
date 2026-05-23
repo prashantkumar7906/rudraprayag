@@ -1,0 +1,158 @@
+{
+  "bookings": [
+    {
+      "bookingId": "BKG-20260523-CF7L",
+      "roomTypeId": "664fa1e2e1b2c3d4e5f6a701",
+      "roomTypeName": "Ganga View Deluxe Room",
+      "checkIn": "2026-06-01T00:00:00.000Z",
+      "checkOut": "2026-06-03T00:00:00.000Z",
+      "nights": 2,
+      "guests": 2,
+      "guestName": "Sanjay Kumar",
+      "guestEmail": "sanjay@gmail.com",
+      "guestPhone": "9876543210",
+      "citizenship": "Indian",
+      "idType": "Aadhar",
+      "idNumber": "123456789012",
+      "specialRequests": "",
+      "priceBreakdown": {
+        "baseAmount": 5000,
+        "gstAmount": 600,
+        "totalAmount": 5600
+      },
+      "razorpayOrderId": "CASH",
+      "paymentMethod": "CASH",
+      "status": "CONFIRMED",
+      "_id": "6a11e3e3d3ecd9a3b481870d",
+      "createdAt": "2026-05-23T17:29:07.728Z",
+      "updatedAt": "2026-05-23T17:29:07.728Z"
+    },
+    {
+      "bookingId": "BKG-20260523-X4GU",
+      "roomTypeId": "664fa1e2e1b2c3d4e5f6a701",
+      "roomTypeName": "Ganga View Deluxe Room",
+      "checkIn": "2026-05-24T00:00:00.000Z",
+      "checkOut": "2026-05-31T00:00:00.000Z",
+      "nights": 7,
+      "guests": 1,
+      "guestName": "Prashant Kumar",
+      "guestEmail": "jhon@doe.com",
+      "guestPhone": "8871687472",
+      "citizenship": "Indian",
+      "idType": "Aadhar",
+      "idNumber": "8745874587458",
+      "specialRequests": "",
+      "priceBreakdown": {
+        "baseAmount": 17500,
+        "gstAmount": 2100,
+        "totalAmount": 19600
+      },
+      "razorpayOrderId": "CASH",
+      "paymentMethod": "CASH",
+      "status": "CONFIRMED",
+      "_id": "6a11e7e3ec901912df530d47",
+      "createdAt": "2026-05-23T17:46:11.212Z",
+      "updatedAt": "2026-05-23T17:46:11.212Z"
+    }
+  ],
+  "donations": [
+    {
+      "donationId": "DON-20260523-CC82",
+      "donorName": "Prashant Kumar",
+      "donorEmail": "jhon@doe.com",
+      "amount": 251,
+      "message": "Annadan / अन्नदान —",
+      "razorpayOrderId": "CASH",
+      "paymentMethod": "CASH",
+      "status": "CONFIRMED",
+      "_id": "6a11e4abec901912df530d45",
+      "createdAt": "2026-05-23T17:32:27.909Z",
+      "updatedAt": "2026-05-23T17:32:27.909Z"
+    }
+  ],
+  "tokens": [
+    {
+      "tokenNumber": "TOK-20260523-JDXM",
+      "type": "BOOKING",
+      "bookingId": "6a11e3e3d3ecd9a3b481870d",
+      "amount": 5600,
+      "name": "Sanjay Kumar",
+      "email": "sanjay@gmail.com",
+      "phone": "9876543210",
+      "paymentMethod": "CASH",
+      "status": "USED",
+      "_id": "6a11e3e3d3ecd9a3b481870e",
+      "createdAt": "2026-05-23T17:29:07.729Z",
+      "updatedAt": "2026-05-23T17:31:49.036Z"
+    },
+    {
+      "tokenNumber": "TOK-20260523-HJ59",
+      "type": "DONATION",
+      "donationId": "6a11e4abec901912df530d45",
+      "amount": 251,
+      "name": "Prashant Kumar",
+      "email": "jhon@doe.com",
+      "phone": "8871687472",
+      "paymentMethod": "CASH",
+      "status": "USED",
+      "_id": "6a11e4abec901912df530d46",
+      "createdAt": "2026-05-23T17:32:27.910Z",
+      "updatedAt": "2026-05-23T17:38:43.879Z"
+    },
+    {
+      "tokenNumber": "TOK-20260523-DBLM",
+      "type": "BOOKING",
+      "bookingId": "6a11e7e3ec901912df530d47",
+      "amount": 19600,
+      "name": "Prashant Kumar",
+      "email": "jhon@doe.com",
+      "phone": "8871687472",
+      "paymentMethod": "CASH",
+      "status": "ACTIVE",
+      "_id": "6a11e7e3ec901912df530d48",
+      "createdAt": "2026-05-23T17:46:11.213Z",
+      "updatedAt": "2026-05-23T17:46:11.213Z"
+    }
+  ],
+  "rooms": [
+    {
+      "_id": "664fa1e2e1b2c3d4e5f6a701",
+      "name": "Ganga View Deluxe Room",
+      "capacity": 3,
+      "pricePerNight": 2500,
+      "gstRate": 0.12,
+      "isActive": true,
+      "description": "Beautiful room with a direct view of the sacred Ganga Sangam.",
+      "blockedDates": []
+    },
+    {
+      "_id": "664fa1e2e1b2c3d4e5f6a702",
+      "name": "Sangam Standard Room",
+      "capacity": 2,
+      "pricePerNight": 1500,
+      "gstRate": 0.12,
+      "isActive": true,
+      "description": "Comfortable standard room close to the temple ghats.",
+      "blockedDates": []
+    },
+    {
+      "_id": "664fa1e2e1b2c3d4e5f6a703",
+      "name": "Family Pilgrim Suite",
+      "capacity": 6,
+      "pricePerNight": 4000,
+      "gstRate": 0.12,
+      "isActive": true,
+      "description": "Spacious suite designed for families and group pilgrims.",
+      "blockedDates": []
+    }
+  ],
+  "admins": [
+    {
+      "_id": "664fa1e2e1b2c3d4e5f6a700",
+      "email": "owner@dharamshala.com",
+      "passwordHash": "$2a$10$UADusqCXtqSlMKDF3ZKYuueHqDyRKXxW7asc0I8zc57ES.br2hc4m",
+      "lastLoginAt": "2026-05-23T17:39:24.975Z",
+      "updatedAt": "2026-05-23T17:39:24.975Z"
+    }
+  ]
+}

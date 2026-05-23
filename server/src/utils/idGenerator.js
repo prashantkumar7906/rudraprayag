@@ -25,5 +25,6 @@ function generateId(prefix) {
 
 const generateBookingId = () => generateId('BKG');
 const generateDonationId = () => generateId('DON');
+const generateTokenId = () => generateId('TOK');
 
-module.exports = { generateBookingId, generateDonationId };
+module.exports = { generateBookingId, generateDonationId, generateTokenId };

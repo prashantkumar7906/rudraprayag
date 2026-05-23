@@ -11,7 +11,12 @@ const donationSchema = new mongoose.Schema({
     enum: ['PENDING', 'CONFIRMED', 'FAILED'],
     default: 'PENDING',
   },
-  razorpayOrderId: { type: String, unique: true, required: true },
+  paymentMethod: {
+    type: String,
+    enum: ['ONLINE', 'CASH'],
+    default: 'ONLINE',
+  },
+  razorpayOrderId: { type: String, unique: true, sparse: true },
   razorpayPaymentId: { type: String, sparse: true, unique: true },
   emailSentAt: { type: Date },
 }, { timestamps: true });

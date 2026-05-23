@@ -5,6 +5,7 @@ const { body, validationResult } = require('express-validator');
 const Admin = require('../models/Admin');
 const Booking = require('../models/Booking');
 const Donation = require('../models/Donation');
+const Token = require('../models/Token');
 const { verifyAdminToken } = require('../middleware/verifyAdminToken');
 const { adminLoginLimiter } = require('../middleware/rateLimiter');
 
@@ -54,7 +55,7 @@ router.post('/login',
 // ── GET /admin/dashboard — stats ──
 router.get('/dashboard', verifyAdminToken, async (req, res) => {
   try {
-    const [totalBookings, confirmedBookings, donationAgg] = await Promise.all([
+    const [totalBookings, confirmedBookings, donationAgg, activeTokens, usedTokens] = await Promise.all([
       Booking.countDocuments(),
       Booking.aggregate([
         { $match: { status: 'CONFIRMED' } },
@@ -64,6 +65,8 @@ router.get('/dashboard', verifyAdminToken, async (req, res) => {
         { $match: { status: 'CONFIRMED' } },
         { $group: { _id: null, count: { $sum: 1 }, total: { $sum: '$amount' } } },
       ]),
+      Token.countDocuments({ status: 'ACTIVE' }),
+      Token.countDocuments({ status: 'USED' }),
     ]);
 
     res.json({
@@ -72,6 +75,8 @@ router.get('/dashboard', verifyAdminToken, async (req, res) => {
       totalRevenue: confirmedBookings[0]?.total || 0,
       donationCount: donationAgg[0]?.count || 0,
       donationTotal: donationAgg[0]?.total || 0,
+      activeTokens,
+      usedTokens,
     });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch dashboard stats.' });
@@ -146,5 +151,57 @@ router.get('/donations', verifyAdminToken, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch donations.' });
   }
 });
+
+// ── GET /admin/tokens — Admin: list tokens ──
+router.get('/tokens', verifyAdminToken, async (req, res) => {
+  const { type, status, paymentMethod, search, page = 1, limit = 20 } = req.query;
+  const filter = {};
+  if (type && type !== 'ALL') filter.type = type;
+  if (status && status !== 'ALL') filter.status = status;
+  if (paymentMethod && paymentMethod !== 'ALL') filter.paymentMethod = paymentMethod;
+  if (search) {
+    const searchRegex = new RegExp(search, 'i');
+    filter.$or = [
+      { tokenNumber: searchRegex },
+      { name: searchRegex },
+      { email: searchRegex },
+    ];
+  }
+
+  try {
+    const tokens = await Token.find(filter)
+      .sort({ createdAt: -1 })
+      .skip((page - 1) * limit)
+      .limit(Number(limit))
+      .populate('bookingId')
+      .populate('donationId');
+    const total = await Token.countDocuments(filter);
+    res.json({ success: true, data: tokens, total, page: Number(page), limit: Number(limit) });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to fetch tokens.' });
+  }
+});
+
+// ── PATCH /admin/tokens/:id/status — Admin: update status ──
+router.patch('/tokens/:id/status',
+  verifyAdminToken,
+  [body('status').isIn(['ACTIVE', 'USED', 'EXPIRED']).withMessage('Invalid status.')],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) return res.status(400).json({ error: errors.array()[0].msg });
+
+    try {
+      const token = await Token.findById(req.params.id);
+      if (!token) return res.status(404).json({ error: 'Token not found.' });
+
+      token.status = req.body.status;
+      await token.save();
+
+      res.json({ success: true, data: token });
+    } catch (err) {
+      res.status(500).json({ error: 'Failed to update token status.' });
+    }
+  }
+);
 
 module.exports = router;

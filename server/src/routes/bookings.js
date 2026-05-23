@@ -5,7 +5,8 @@ const mongoose = require('mongoose');
 const Razorpay = require('razorpay');
 const Booking = require('../models/Booking');
 const RoomType = require('../models/RoomType');
-const { generateBookingId } = require('../utils/idGenerator');
+const { generateBookingId, generateTokenId } = require('../utils/idGenerator');
+const Token = require('../models/Token');
 const { sendBookingConfirmation, sendAdminBookingAlert, sendCancellationEmail } = require('../email/templates');
 const { verifyAdminToken } = require('../middleware/verifyAdminToken');
 const { bookingInitiateLimiter } = require('../middleware/rateLimiter');
@@ -95,16 +96,27 @@ router.post('/initiate',
       const gstAmount = Math.round(baseAmount * room.gstRate);
       const totalAmount = baseAmount + gstAmount;
 
-      // 5. Create Razorpay order
+      // 5. Create Razorpay order or handle CASH
       const bookingIdValue = generateBookingId();
-      const order = await razorpay.orders.create({
-        amount: totalAmount * 100, // paise
-        currency: 'INR',
-        receipt: bookingIdValue,
-        notes: { bookingId: bookingIdValue, guestName, guestEmail },
-      });
+      const isCash = req.body.paymentMethod === 'CASH';
+      let orderId = 'CASH';
+      let bookingStatus = 'PENDING';
+      let rzpAmount = 0;
 
-      // 6. Create PENDING booking
+      if (isCash) {
+        bookingStatus = 'CONFIRMED';
+      } else {
+        const order = await razorpay.orders.create({
+          amount: totalAmount * 100, // paise
+          currency: 'INR',
+          receipt: bookingIdValue,
+          notes: { bookingId: bookingIdValue, guestName, guestEmail },
+        });
+        orderId = order.id;
+        rzpAmount = order.amount;
+      }
+
+      // 6. Create booking
       const [booking] = await Booking.create([{
         bookingId: bookingIdValue,
         roomTypeId,
@@ -121,17 +133,41 @@ router.post('/initiate',
         idNumber: idNumber.trim(),
         specialRequests: (specialRequests || '').trim(),
         priceBreakdown: { baseAmount, gstAmount, totalAmount },
-        razorpayOrderId: order.id,
-        status: 'PENDING',
+        razorpayOrderId: orderId,
+        paymentMethod: isCash ? 'CASH' : 'ONLINE',
+        status: bookingStatus,
       }], { session });
 
+      // If CASH, create a Token instantly
+      if (isCash) {
+        const tokenNum = generateTokenId();
+        await Token.create([{
+          tokenNumber: tokenNum,
+          type: 'BOOKING',
+          bookingId: booking._id,
+          amount: totalAmount,
+          name: booking.guestName,
+          email: booking.guestEmail,
+          phone: booking.guestPhone,
+          paymentMethod: 'CASH',
+          status: 'ACTIVE'
+        }], { session });
+      }
+
       await session.commitTransaction();
+
+      // Trigger confirmation email for CASH booking
+      if (isCash) {
+        sendBookingConfirmation(booking).catch(e => console.error('[Email] Confirmation email failed:', e.message));
+        sendAdminBookingAlert(booking).catch(e => console.error('[Email] Admin alert failed:', e.message));
+      }
 
       res.status(201).json({
         success: true,
         bookingId: booking.bookingId,
-        razorpayOrderId: order.id,
-        amount: order.amount,
+        paymentMethod: isCash ? 'CASH' : 'ONLINE',
+        razorpayOrderId: isCash ? null : orderId,
+        amount: isCash ? totalAmount * 100 : rzpAmount,
         currency: 'INR',
         keyId: process.env.RAZORPAY_KEY_ID,
       });
@@ -196,6 +232,24 @@ async function confirmBooking(payment) {
     booking.razorpayPaymentId = payment.id;
     await booking.save();
 
+    // Idempotent Token creation for ONLINE booking
+    const existingToken = await Token.findOne({ bookingId: booking._id });
+    if (!existingToken) {
+      const tokenNum = generateTokenId();
+      await Token.create({
+        tokenNumber: tokenNum,
+        type: 'BOOKING',
+        bookingId: booking._id,
+        amount: booking.priceBreakdown.totalAmount,
+        name: booking.guestName,
+        email: booking.guestEmail,
+        phone: booking.guestPhone,
+        paymentMethod: 'ONLINE',
+        status: 'ACTIVE'
+      });
+      console.log('[Webhook] Generated online booking token:', tokenNum);
+    }
+
     // Send emails (non-blocking)
     const emailSent = await sendBookingConfirmation(booking);
     if (emailSent) {
@@ -216,7 +270,9 @@ router.get('/:bookingId', async (req, res) => {
     const booking = await Booking.findOne({ bookingId: req.params.bookingId })
       .select('-__v');
     if (!booking) return res.status(404).json({ error: 'Booking not found.' });
-    res.json({ success: true, data: booking });
+
+    const token = await Token.findOne({ bookingId: booking._id }).select('-__v');
+    res.json({ success: true, data: booking, token });
   } catch {
     res.status(500).json({ error: 'Failed to fetch booking.' });
   }
@@ -268,6 +324,12 @@ router.patch('/admin/:id/cancel',
       booking.cancellationReason = req.body.reason;
       booking.cancelledAt = new Date();
       await booking.save();
+
+      // Expire associated token
+      await Token.findOneAndUpdate(
+        { bookingId: booking._id },
+        { status: 'EXPIRED' }
+      );
 
       // Send cancellation email
       sendCancellationEmail(booking).catch(e => console.error('[Email] Cancellation email failed:', e.message));

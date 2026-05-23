@@ -25,7 +25,12 @@ const bookingSchema = new mongoose.Schema({
     enum: ['PENDING', 'CONFIRMED', 'CANCELLED', 'EXPIRED'],
     default: 'PENDING',
   },
-  razorpayOrderId: { type: String, unique: true, required: true },
+  paymentMethod: {
+    type: String,
+    enum: ['ONLINE', 'CASH'],
+    default: 'ONLINE',
+  },
+  razorpayOrderId: { type: String, unique: true, sparse: true },
   razorpayPaymentId: { type: String, sparse: true, unique: true },
   cancellationReason: { type: String },
   cancelledAt: { type: Date },
