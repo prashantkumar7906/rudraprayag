@@ -123,11 +123,15 @@ async function start() {
     }
   }
 
-  app.listen(PORT, () => {
-    console.log(`\n🚀 Server running → http://localhost:${PORT}`);
-    console.log(`   Health check  → http://localhost:${PORT}/health`);
-    console.log(`   Environment  : ${process.env.NODE_ENV || 'development'}\n`);
-  });
+  if (!process.env.VERCEL) {
+    app.listen(PORT, () => {
+      console.log(`\n🚀 Server running → http://localhost:${PORT}`);
+      console.log(`   Health check  → http://localhost:${PORT}/health`);
+      console.log(`   Environment  : ${process.env.NODE_ENV || 'development'}\n`);
+    });
+  } else {
+    console.log('[Server] Running as a Vercel Serverless Function');
+  }
 }
 
 start();
