@@ -3,10 +3,9 @@
   "outputDirectory": "client/dist",
   "installCommand": "npm install && cd client && npm install",
   "framework": null,
-  "routes": [
-    { "src": "/api/(.*)", "dest": "/api" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "/index.html" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/(.*)", "destination": "/index.html" }
   ],
   "headers": [
     {
