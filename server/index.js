@@ -12,6 +12,8 @@ const donationsRouter = require('./src/routes/donations');
 const adminRouter    = require('./src/routes/admin');
 const { publicLimiter } = require('./src/middleware/rateLimiter');
 const Booking = require('./src/models/Booking');
+const RoomType = require('./src/models/RoomType');
+const Admin = require('./src/models/Admin');
 
 const app  = express();
 const PORT = process.env.PORT || 5000;
@@ -113,6 +115,56 @@ async function start() {
         { unique: true, partialFilterExpression: { status: 'CONFIRMED' } }
       );
       console.log('[DB] Confirmed-booking unique index ensured');
+
+      // Auto-seed rooms if database has 0 room types
+      const roomsCount = await RoomType.countDocuments();
+      if (roomsCount === 0) {
+        console.log('[DB] ⚠️  No rooms found in database — seeding default room types…');
+        const defaultRooms = [
+          {
+            name: "Ganga View Deluxe Room",
+            capacity: 3,
+            pricePerNight: 2500,
+            gstRate: 0.12,
+            isActive: true,
+            description: "Beautiful room with a direct view of the sacred Ganga Sangam.",
+            blockedDates: []
+          },
+          {
+            name: "Sangam Standard Room",
+            capacity: 2,
+            pricePerNight: 1500,
+            gstRate: 0.12,
+            isActive: true,
+            description: "Comfortable standard room close to the temple ghats.",
+            blockedDates: []
+          },
+          {
+            name: "Family Pilgrim Suite",
+            capacity: 6,
+            pricePerNight: 4000,
+            gstRate: 0.12,
+            isActive: true,
+            description: "Spacious suite designed for families and group pilgrims.",
+            blockedDates: []
+          }
+        ];
+        await RoomType.insertMany(defaultRooms);
+        console.log('[DB] ✅ Default room types seeded successfully!');
+      }
+
+      // Auto-seed admin if database has 0 admins
+      const adminCount = await Admin.countDocuments();
+      if (adminCount === 0) {
+        console.log('[DB] ⚠️  No admin account found in database — seeding default admin…');
+        const bcrypt = require('bcryptjs');
+        const passwordHash = await bcrypt.hash('Password@rudrprayad', 10);
+        await Admin.create({
+          email: 'owner@dharamshala.com',
+          passwordHash
+        });
+        console.log('[DB] ✅ Default admin account seeded successfully!');
+      }
     } catch (err) {
       console.error('[DB] ❌ Connection failed:', err.message);
       console.warn('[DB] Continuing in degraded mode using MockDB…');
