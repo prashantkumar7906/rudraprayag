@@ -31,7 +31,10 @@ api.interceptors.response.use(
       localStorage.removeItem('adminToken');
       window.location.href = '/admin/login';
     }
-    const msg = error.response.data?.error || error.response.data?.message || 'An unexpected error occurred.';
+    let msg = error.response.data?.error || error.response.data?.message || 'An unexpected error occurred.';
+    if (typeof msg === 'object') {
+      msg = msg.message || JSON.stringify(msg);
+    }
     return Promise.reject({ message: msg, status: error.response.status });
   }
 );
