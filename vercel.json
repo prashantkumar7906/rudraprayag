@@ -12,10 +12,9 @@
       "config": { "includeFiles": ["server/**"] }
     }
   ],
-  "routes": [
-    { "src": "/api/(.*)", "dest": "api/index.js" },
-    { "handle": "filesystem" },
-    { "src": "/(.*)", "dest": "client/package.json" }
+  "rewrites": [
+    { "source": "/api/(.*)", "destination": "/api/index.js" },
+    { "source": "/((?!api).*)" , "destination": "/client/dist/index.html" }
   ],
   "headers": [
     {
