@@ -271,8 +271,8 @@ function enableMockDb() {
     };
 
     // 5. Model.countDocuments
-    Model.countDocuments = async function(filter = {}) {
-      return findInternal(filter).length;
+    Model.countDocuments = function(filter = {}) {
+      return new MockQuery(() => findInternal(filter).length);
     };
 
     // 6. Model.findOneAndUpdate

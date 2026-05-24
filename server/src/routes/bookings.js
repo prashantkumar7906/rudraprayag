@@ -91,7 +91,7 @@ router.post('/initiate',
         status: 'CONFIRMED',
         checkIn: { $lt: checkOutDate },
         checkOut: { $gt: checkInDate },
-      }).session(session);
+      });
 
       const totalInventory = room.totalRooms || 1;
       if (conflictingCount >= totalInventory) {
