@@ -38,8 +38,8 @@ app.use(cors({
 }));
 
 // ── Webhook routes: raw body MUST come before json() parser ──────────────────
-app.use('/api/v1/bookings/webhook', express.raw({ type: 'application/json' }));
-app.use('/api/v1/donations/webhook', express.raw({ type: 'application/json' }));
+app.use(['/api/v1/bookings/webhook', '/v1/bookings/webhook'], express.raw({ type: 'application/json' }));
+app.use(['/api/v1/donations/webhook', '/v1/donations/webhook'], express.raw({ type: 'application/json' }));
 
 // ── Body parsers ──────────────────────────────────────────────────────────────
 app.use(express.json({ limit: '10kb' }));
@@ -49,7 +49,7 @@ app.use(express.urlencoded({ extended: false, limit: '10kb' }));
 app.use(mongoSanitize());
 
 // ── Rate limiting (public) ────────────────────────────────────────────────────
-app.use('/api/', publicLimiter);
+app.use(['/api/', '/v1/'], publicLimiter);
 
 // ── DB connection (lazy — safe for serverless cold starts) ────────────────────
 let dbPromise = null;
@@ -138,7 +138,7 @@ async function initDb() {
 }
 
 // ── Middleware: ensure DB is ready before any API request ─────────────────────
-app.use('/api', async (req, res, next) => {
+app.use(['/api', '/v1'], async (req, res, next) => {
   try {
     await getDbConnection();
     next();
@@ -153,10 +153,10 @@ app.get('/health', (_req, res) =>
 );
 
 // ── Routes ────────────────────────────────────────────────────────────────────
-app.use('/api/v1/rooms',     roomsRouter);
-app.use('/api/v1/bookings',  bookingsRouter);
-app.use('/api/v1/donations', donationsRouter);
-app.use('/api/v1/admin',     adminRouter);
+app.use(['/api/v1/rooms', '/v1/rooms'],         roomsRouter);
+app.use(['/api/v1/bookings', '/v1/bookings'],   bookingsRouter);
+app.use(['/api/v1/donations', '/v1/donations'], donationsRouter);
+app.use(['/api/v1/admin', '/v1/admin'],         adminRouter);
 
 // ── 404 ───────────────────────────────────────────────────────────────────────
 app.use((req, res) =>
