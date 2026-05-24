@@ -86,14 +86,15 @@ router.post('/initiate',
       }
 
       // 3. Check availability within transaction
-      const conflict = await Booking.findOne({
+      const conflictingCount = await Booking.countDocuments({
         roomTypeId,
         status: 'CONFIRMED',
         checkIn: { $lt: checkOutDate },
         checkOut: { $gt: checkInDate },
       }).session(session);
 
-      if (conflict) {
+      const totalInventory = room.totalRooms || 1;
+      if (conflictingCount >= totalInventory) {
         await session.abortTransaction();
         return res.status(409).json({ error: 'ROOM_NOT_AVAILABLE', message: 'Room is not available for selected dates.' });
       }

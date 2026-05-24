@@ -10,7 +10,7 @@ const publicLimiter = rateLimit({
 
 const bookingInitiateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many booking attempts. Please wait before trying again.' },
@@ -18,7 +18,7 @@ const bookingInitiateLimiter = rateLimit({
 
 const donationInitiateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 10,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many donation attempts. Please wait before trying again.' },
@@ -26,7 +26,7 @@ const donationInitiateLimiter = rateLimit({
 
 const adminLoginLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 5,
+  max: 100,
   standardHeaders: true,
   legacyHeaders: false,
   message: { error: 'Too many login attempts. Please try again later.' },

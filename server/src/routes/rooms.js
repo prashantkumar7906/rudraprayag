@@ -41,8 +41,8 @@ router.get('/availability',
         return res.json({ available: false, message: 'Room type not found.' });
       }
 
-      // Check for conflicting CONFIRMED bookings
-      const conflict = await Booking.findOne({
+      // Check for conflicting CONFIRMED bookings count
+      const conflictingCount = await Booking.countDocuments({
         roomTypeId,
         status: 'CONFIRMED',
         checkIn: { $lt: checkOutDate },
@@ -54,7 +54,9 @@ router.get('/availability',
         new Date(b.from) < checkOutDate && new Date(b.to) > checkInDate
       );
 
-      if (conflict || isBlocked) {
+      const totalInventory = room.totalRooms || 1;
+
+      if (conflictingCount >= totalInventory || isBlocked) {
         return res.json({ available: false, roomTypeId, roomName: room.name });
       }
 

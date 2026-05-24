@@ -118,6 +118,18 @@
       "_id": "6a12caf8fd694c594aca2672",
       "createdAt": "2026-05-24T09:55:04.943Z",
       "updatedAt": "2026-05-24T09:55:04.943Z"
+    },
+    {
+      "donationId": "DON-20260524-E9EF",
+      "donorName": "asd",
+      "donorEmail": "asd@asd.com",
+      "amount": 251,
+      "message": "Annadan / अन्नदान —",
+      "paymentMethod": "CASH",
+      "status": "CONFIRMED",
+      "_id": "6a12d9287080c1a88ab7158c",
+      "createdAt": "2026-05-24T10:55:36.632Z",
+      "updatedAt": "2026-05-24T10:55:36.632Z"
     }
   ],
   "tokens": [
@@ -204,6 +216,20 @@
       "_id": "6a12cb16fd694c594aca2675",
       "createdAt": "2026-05-24T09:55:34.476Z",
       "updatedAt": "2026-05-24T09:55:34.476Z"
+    },
+    {
+      "tokenNumber": "TOK-20260524-M25U",
+      "type": "DONATION",
+      "donationId": "6a12d9287080c1a88ab7158c",
+      "amount": 251,
+      "name": "asd",
+      "email": "asd@asd.com",
+      "phone": "",
+      "paymentMethod": "CASH",
+      "status": "ACTIVE",
+      "_id": "6a12d9287080c1a88ab7158d",
+      "createdAt": "2026-05-24T10:55:36.633Z",
+      "updatedAt": "2026-05-24T10:55:36.633Z"
     }
   ],
   "rooms": [
@@ -213,6 +239,7 @@
       "capacity": 3,
       "pricePerNight": 2500,
       "gstRate": 0.12,
+      "totalRooms": 10,
       "isActive": true,
       "description": "Beautiful room with a direct view of the sacred Ganga Sangam.",
       "blockedDates": []
@@ -223,6 +250,7 @@
       "capacity": 2,
       "pricePerNight": 1500,
       "gstRate": 0.12,
+      "totalRooms": 10,
       "isActive": true,
       "description": "Comfortable standard room close to the temple ghats.",
       "blockedDates": []
@@ -233,6 +261,7 @@
       "capacity": 6,
       "pricePerNight": 4000,
       "gstRate": 0.12,
+      "totalRooms": 10,
       "isActive": true,
       "description": "Spacious suite designed for families and group pilgrims.",
       "blockedDates": []
@@ -243,8 +272,8 @@
       "_id": "664fa1e2e1b2c3d4e5f6a700",
       "email": "owner@dharamshala.com",
       "passwordHash": "$2a$10$UADusqCXtqSlMKDF3ZKYuueHqDyRKXxW7asc0I8zc57ES.br2hc4m",
-      "lastLoginAt": "2026-05-24T09:55:48.546Z",
-      "updatedAt": "2026-05-24T09:55:48.547Z"
+      "lastLoginAt": "2026-05-24T10:54:14.978Z",
+      "updatedAt": "2026-05-24T10:54:14.978Z"
     }
   ]
 }

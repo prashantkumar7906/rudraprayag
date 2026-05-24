@@ -98,6 +98,7 @@ async function initDb() {
           capacity: 3,
           pricePerNight: 2500,
           gstRate: 0.12,
+          totalRooms: 10,
           isActive: true,
           description: "Beautiful room with a direct view of the sacred Ganga Sangam.",
           blockedDates: []
@@ -107,6 +108,7 @@ async function initDb() {
           capacity: 2,
           pricePerNight: 1500,
           gstRate: 0.12,
+          totalRooms: 10,
           isActive: true,
           description: "Comfortable standard room close to the temple ghats.",
           blockedDates: []
@@ -116,6 +118,7 @@ async function initDb() {
           capacity: 6,
           pricePerNight: 4000,
           gstRate: 0.12,
+          totalRooms: 10,
           isActive: true,
           description: "Spacious suite designed for families and group pilgrims.",
           blockedDates: []
@@ -132,6 +135,10 @@ async function initDb() {
       await Admin.create({ email: 'owner@dharamshala.com', passwordHash });
       console.log('[DB] ✅ Default admin seeded.');
     }
+
+    // Dynamic database migration: upgrade inventory for all existing rooms
+    await RoomType.updateMany({}, { $set: { totalRooms: 10 } });
+    console.log('[DB] ✅ Dynamic migration completed: room inventory upgraded to 10 for all room types.');
   } catch (err) {
     console.error('[DB] ❌ Connection failed:', err.message);
     const { enableMockDb } = require('./src/utils/mockDb');
