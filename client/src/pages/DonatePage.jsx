@@ -7,9 +7,9 @@ import api from '../api/axios';
 
 const PRESETS = [101, 251, 501, 1001, 2501];
 const SEVAS = [
-  { title:'Annadan',      hindi:'अन्नदान', desc:'₹251 feeds one pilgrim a sattvic meal at the dharmashala kitchen.', img:'/journey/annadan.png' },
-  { title:'Sangam Aarti', hindi:'आरती',    desc:'₹501 supports a full day of evening aarti at the Sangam ghat.', img:'/journey/aarti.png' },
-  { title:'Shelter',      hindi:'आश्रय',  desc:'₹1001 covers a night\'s rest for a needy sadhu or pilgrim.', img:'/journey/shelter.png' },
+  { title:'Annadan',      hindi:'अन्नदान', desc:'₹251 feeds one pilgrim a sattvic meal at the dharmashala kitchen.', img:'/journey/annadan.webp' },
+  { title:'Sangam Aarti', hindi:'आरती',    desc:'₹501 supports a full day of evening aarti at the Sangam ghat.', img:'/journey/aarti.webp' },
+  { title:'Shelter',      hindi:'आश्रय',  desc:'₹1001 covers a night\'s rest for a needy sadhu or pilgrim.', img:'/journey/shelter.webp' },
 ];
 const PURPOSES = ['Annadan / अन्नदान','Sangam Aarti / संगम आरती','Shelter / आश्रय','General / सामान्य दान'];
 

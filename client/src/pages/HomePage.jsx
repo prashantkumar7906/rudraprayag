@@ -4,8 +4,8 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const ROOMS = [
-  { id: 'non-ac', name: 'Non AC Room', hindi: 'गैर-एसी कक्ष', capacity: 'Up to 2', view: 'Free WiFi',     price: 800,  image: '/images/non_ac_room_1.jpg', desc: 'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the sacred Sangam.' },
-  { id: 'ac',     name: 'AC Room',     hindi: 'एसी कक्ष',      capacity: 'Up to 3', view: 'Balcony View', price: 1500, image: '/images/ac_room_1.jpg',   desc: 'Spacious air-conditioned room with a private balcony overlooking the valley and the cool Himalayan mountain breeze.' },
+  { id: 'non-ac', name: 'Non AC Room', hindi: 'गैर-एसी कक्ष', capacity: 'Up to 2', view: 'Free WiFi',     price: 800,  image: '/images/non_ac_room_1.webp', desc: 'A clean, peaceful room with all essentials for a comfortable pilgrimage stay near the sacred Sangam.' },
+  { id: 'ac',     name: 'AC Room',     hindi: 'एसी कक्ष',      capacity: 'Up to 3', view: 'Balcony View', price: 1500, image: '/images/ac_room_1.webp',   desc: 'Spacious air-conditioned room with a private balcony overlooking the valley and the cool Himalayan mountain breeze.' },
 ];
 
 
@@ -84,7 +84,7 @@ export default function HomePage() {
                   boxShadow: '0 20px 60px rgba(232,82,10,0.22)',
                   willChange: 'transform',
                 }}>
-                  <img src="/images/hero_temple.png" alt="Chitrakoot Dham at the sacred river confluence" fetchpriority="high" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+                  <img src="/images/hero_temple.webp" alt="Chitrakoot Dham at the sacred river confluence" fetchpriority="high" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
                 </div>
               </div>
             </div>

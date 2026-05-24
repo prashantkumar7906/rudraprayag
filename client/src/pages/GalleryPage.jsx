@@ -3,17 +3,17 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const IMGS = [
-  { src:'/images/gallery_user_1.jpg',       alt:'Gau Mata' },
-  { src:'/images/gallery_user_2.jpg',       alt:'Riverside view' },
-  { src:'/images/gallery_user_3.jpg',       alt:'Night sky' },
-  { src:'/images/gallery_user_4.jpg',       alt:'Gau Mata calf' },
-  { src:'/images/gallery_user_5.jpg',       alt:'Pooja rituals' },
-  { src:'/images/gallery_devprayag.png',   alt:'Devprayag aerial — sacred river confluence' },
-  { src:'/images/gallery_diyas.png',        alt:'Diyas burning in temple' },
-  { src:'/images/gallery_diya_single.png',  alt:'Single diya flame' },
-  { src:'/images/room_standard.png',        alt:'Non AC Room interior' },
-  { src:'/images/room_deluxe.png',          alt:'AC Room interior' },
-  { src:'/images/room_family.png',          alt:'Spacious AC Room interior' },
+  { src:'/images/gallery_user_1.webp',       alt:'Gau Mata' },
+  { src:'/images/gallery_user_2.webp',       alt:'Riverside view' },
+  { src:'/images/gallery_user_3.webp',       alt:'Night sky' },
+  { src:'/images/gallery_user_4.webp',       alt:'Gau Mata calf' },
+  { src:'/images/gallery_user_5.webp',       alt:'Pooja rituals' },
+  { src:'/images/gallery_devprayag.webp',   alt:'Devprayag aerial — sacred river confluence' },
+  { src:'/images/gallery_diyas.webp',        alt:'Diyas burning in temple' },
+  { src:'/images/gallery_diya_single.webp',  alt:'Single diya flame' },
+  { src:'/images/room_standard.webp',        alt:'Non AC Room interior' },
+  { src:'/images/room_deluxe.webp',          alt:'AC Room interior' },
+  { src:'/images/room_family.webp',          alt:'Spacious AC Room interior' },
 ];
 
 export default function GalleryPage() {

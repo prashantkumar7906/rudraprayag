@@ -7,21 +7,21 @@ import api from '../api/axios';
 // Room amenities/images by name keyword match (for display enrichment)
 const ROOM_EXTRAS = {
   default: {
-    image: '/images/ac_room_1.jpg',
+    image: '/images/ac_room_1.webp',
     amenities: ['Free WiFi', 'Attached Bath', 'Daily Housekeeping'],
   },
   'ganga': {
-    image: '/images/ac_room_1.jpg',
+    image: '/images/ac_room_1.webp',
     hindi: 'गंगा व्यू डीलक्स',
     amenities: ['Balcony View', 'Free WiFi', 'Tea/Coffee', 'Attached Bath', 'Daily Housekeeping'],
   },
   'sangam': {
-    image: '/images/non_ac_room_1.jpg',
+    image: '/images/non_ac_room_1.webp',
     hindi: 'संगम स्टैंडर्ड',
     amenities: ['Free WiFi', 'Attached Bath', 'Daily Housekeeping'],
   },
   'family': {
-    image: '/images/ac_room_2.jpg',
+    image: '/images/ac_room_2.webp',
     hindi: 'पारिवारिक सुइट',
     amenities: ['AC', 'Balcony View', 'Free WiFi', 'Tea/Coffee', 'Attached Bath', 'Daily Housekeeping'],
   },

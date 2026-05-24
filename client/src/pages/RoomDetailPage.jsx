@@ -7,25 +7,25 @@ import api from '../api/axios';
 // Enrichment data by room name keyword
 const ROOM_EXTRAS = {
   'ganga': {
-    images: ['/images/ac_room_1.jpg', '/images/ac_room_2.jpg', '/images/ac_room_3.jpg'],
+    images: ['/images/ac_room_1.webp', '/images/ac_room_2.webp', '/images/ac_room_3.webp'],
     hindi: 'गंगा व्यू डीलक्स',
     amenities: ['Balcony View', 'Free WiFi', 'Tea/Coffee', 'Attached Bath', 'Daily Housekeeping'],
     descH: 'बालकनी के साथ विशाल वातानुकूलित कक्ष, घाटी का मनोरम दृश्य।',
   },
   'sangam': {
-    images: ['/images/non_ac_room_1.jpg'],
+    images: ['/images/non_ac_room_1.webp'],
     hindi: 'संगम स्टैंडर्ड',
     amenities: ['Free WiFi', 'Attached Bath', 'Tea/Coffee', 'Daily Housekeeping'],
     descH: 'संगम के निकट एक स्वच्छ और शांतिपूर्ण कक्ष।',
   },
   'family': {
-    images: ['/images/ac_room_1.jpg', '/images/ac_room_2.jpg'],
+    images: ['/images/ac_room_1.webp', '/images/ac_room_2.webp'],
     hindi: 'पारिवारिक सुइट',
     amenities: ['AC', 'Balcony View', 'Free WiFi', 'Tea/Coffee', 'Attached Bath', 'Daily Housekeeping'],
     descH: 'परिवार और समूह तीर्थयात्रियों के लिए विशाल सुइट।',
   },
   'default': {
-    images: ['/images/ac_room_1.jpg'],
+    images: ['/images/ac_room_1.webp'],
     hindi: '',
     amenities: ['Free WiFi', 'Attached Bath', 'Daily Housekeeping'],
     descH: '',
@@ -171,7 +171,7 @@ export default function RoomDetailPage() {
     }
   };
 
-  const images = extras.images || ['/images/ac_room_1.jpg'];
+  const images = extras.images || ['/images/ac_room_1.webp'];
 
   return (
     <>

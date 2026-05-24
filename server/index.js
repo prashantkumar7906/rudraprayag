@@ -52,9 +52,15 @@ app.use(mongoSanitize());
 app.use('/api/', publicLimiter);
 
 // ── DB connection (lazy — safe for serverless cold starts) ────────────────────
+let dbPromise = null;
 let dbReady = false;
-let dbInitializing = false;
-let dbInitQueue = [];
+
+async function getDbConnection() {
+  if (!dbPromise) {
+    dbPromise = initDb();
+  }
+  return dbPromise;
+}
 
 async function initDb() {
   const mongoUri = process.env.MONGODB_URI || '';
@@ -70,7 +76,7 @@ async function initDb() {
   if (mongoose.connection.readyState === 1) return; // already connected
 
   try {
-    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 8000 });
+    await mongoose.connect(mongoUri, { serverSelectionTimeoutMS: 3000 });
     console.log('[DB] ✅ Connected to MongoDB Atlas');
 
     // Ensure partial unique index for double-booking prevention
@@ -126,29 +132,19 @@ async function initDb() {
     console.error('[DB] ❌ Connection failed:', err.message);
     const { enableMockDb } = require('./src/utils/mockDb');
     enableMockDb();
+  } finally {
+    dbReady = true;
   }
 }
 
 // ── Middleware: ensure DB is ready before any API request ─────────────────────
 app.use('/api', async (req, res, next) => {
-  if (dbReady) return next();
-
-  if (!dbInitializing) {
-    dbInitializing = true;
-    try {
-      await initDb();
-    } finally {
-      dbReady = true;
-      dbInitializing = false;
-      // flush queued requests
-      dbInitQueue.forEach(fn => fn());
-      dbInitQueue = [];
-    }
-    return next();
+  try {
+    await getDbConnection();
+    next();
+  } catch (err) {
+    next(err);
   }
-
-  // Another request is already initializing — queue this one
-  dbInitQueue.push(next);
 });
 
 // ── Health check ──────────────────────────────────────────────────────────────
@@ -197,13 +193,12 @@ if (!process.env.VERCEL) {
 
 // ── Local dev server start ────────────────────────────────────────────────────
 if (!process.env.VERCEL) {
-  initDb().then(() => {
-    app.listen(PORT, () => {
-      console.log(`\n🚀 Server running → http://localhost:${PORT}`);
-      console.log(`   Health check  → http://localhost:${PORT}/health`);
-      console.log(`   Environment  : ${process.env.NODE_ENV || 'development'}\n`);
-    });
+  app.listen(PORT, () => {
+    console.log(`\n🚀 Server running → http://localhost:${PORT}`);
+    console.log(`   Health check  → http://localhost:${PORT}/health`);
+    console.log(`   Environment  : ${process.env.NODE_ENV || 'development'}\n`);
   });
+  getDbConnection(); // Connect to DB asynchronously in the background
 }
 
 module.exports = app;
