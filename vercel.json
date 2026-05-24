@@ -14,7 +14,12 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/index.js" },
-    { "src": "/(.*)", "dest": "/client/package.json" }
+    { "src": "/assets/(.*)", "dest": "/client/assets/$1" },
+    { "src": "/images/(.*)", "dest": "/client/images/$1" },
+    { "src": "/journey/(.*)", "dest": "/client/journey/$1" },
+    { "src": "/favicon.svg", "dest": "/client/favicon.svg" },
+    { "src": "/icons.svg", "dest": "/client/icons.svg" },
+    { "src": "/((?!api).*)/?$", "dest": "/client/index.html" }
   ],
   "headers": [
     {
