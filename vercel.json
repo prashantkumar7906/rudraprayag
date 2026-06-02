@@ -19,6 +19,7 @@
     { "src": "/journey/(.*)", "dest": "/client/journey/$1" },
     { "src": "/favicon.svg", "dest": "/client/favicon.svg" },
     { "src": "/icons.svg", "dest": "/client/icons.svg" },
+    { "src": "/googlef2ccddcf7b6493e9.html", "dest": "/client/googlef2ccddcf7b6493e9.html" },
     { "src": "/((?!api).*)/?$", "dest": "/client/index.html" }
   ],
   "headers": [
