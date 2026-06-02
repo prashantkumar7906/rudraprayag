@@ -1,6 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-import { lazy, Suspense } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { lazy, Suspense, useEffect } from 'react';
 import HomePage from './pages/HomePage';
+
+const GangaLandingPage = lazy(() => import('./pages/GangaLandingPage'));
 
 // Lazy-loaded pages — each becomes its own JS chunk, loaded on-demand
 const RoomsPage = lazy(() => import('./pages/RoomsPage'));
@@ -23,6 +25,14 @@ function PageLoader() {
   );
 }
 
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+  }, [pathname]);
+  return null;
+}
+
 function ProtectedRoute({ children }) {
   return localStorage.getItem('adminToken') ? children : <Navigate to="/admin/login" replace />;
 }
@@ -30,9 +40,11 @@ function ProtectedRoute({ children }) {
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/"                                element={<HomePage />} />
+          <Route path="/"                                element={<GangaLandingPage />} />
+          <Route path="/home"                            element={<HomePage />} />
           <Route path="/rooms"                           element={<RoomsPage />} />
           <Route path="/rooms/:roomId"                   element={<RoomDetailPage />} />
           <Route path="/gallery"                         element={<GalleryPage />} />
@@ -49,7 +61,7 @@ export default function App() {
               <div style={{fontSize:'4rem',color:'#E8520A',marginBottom:'1rem'}}>ॐ</div>
               <h1 style={{fontFamily:'Playfair Display,serif',color:'#1A0A00',fontSize:'2rem',fontWeight:700}}>Page Not Found</h1>
               <p style={{color:'#3D2010',margin:'0.5rem 0 2rem'}}>The page you are looking for does not exist.</p>
-              <a href="/" className="btn-primary">Back to Home</a>
+              <a href="/home" className="btn-primary">Back to Home</a>
             </div>
           } />
         </Routes>

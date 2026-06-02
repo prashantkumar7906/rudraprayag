@@ -55,9 +55,13 @@ export default function Footer() {
           </div>
         </div>
 
-        <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem' }}>
+        <div style={{ paddingTop: '1.5rem', display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: '0.5rem', alignItems: 'center' }}>
           <p style={{ fontSize: '0.78rem', color: '#C4581A', margin: 0 }}>© {new Date().getFullYear()} Hari Om Trust. All rights reserved.</p>
-          <p style={{ fontSize: '0.78rem', color: '#C4581A', margin: 0 }}>Built with ♡ for pilgrims</p>
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+            <Link to="/" style={{ fontSize: '0.78rem', color: '#E8520A', textDecoration: 'none', fontWeight: '500' }} onMouseEnter={e => e.currentTarget.style.textDecoration='underline'} onMouseLeave={e => e.currentTarget.style.textDecoration='none'}>Re-enter Gateway / द्वार प्रवेश</Link>
+            <span style={{ fontSize: '0.78rem', color: '#F0E8DF' }}>|</span>
+            <p style={{ fontSize: '0.78rem', color: '#C4581A', margin: 0 }}>Built with ♡ for pilgrims</p>
+          </div>
         </div>
       </div>
     </footer>

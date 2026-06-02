@@ -216,7 +216,7 @@ export default function BookingConfirmationPage() {
                   >
                     📄 Download Summary
                   </button>
-                  <Link to="/" className="flex-1">
+                  <Link to="/home" className="flex-1">
                     <button className="btn-bhagwa w-full">
                       🏠 Back to Home
                     </button>
@@ -241,7 +241,7 @@ export default function BookingConfirmationPage() {
               <p className="mt-3 text-sm" style={{ color: '#9a7050' }}>
                 Booking ID: <strong style={{ color: '#CC3300' }}>{bookingId}</strong>
               </p>
-              <Link to="/" className="inline-block mt-6">
+              <Link to="/home" className="inline-block mt-6">
                 <button className="btn-bhagwa">Back to Home</button>
               </Link>
             </div>
