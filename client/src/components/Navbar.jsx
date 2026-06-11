@@ -26,7 +26,7 @@ export default function Navbar() {
       {/* Top Social Banner */}
       <div style={{ background: '#1A0A00', color: '#FDF6EE', padding: '0.45rem 0', fontSize: '0.75rem', fontFamily: 'Inter, sans-serif' }}>
         <div className="container" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem' }}>
-          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" style={{ color: '#FDF6EE', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: 0.9, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.9}>
+          <a href="https://www.instagram.com/chitrakoot_dham_2026" target="_blank" rel="noopener noreferrer" style={{ color: '#FDF6EE', textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.4rem', opacity: 0.9, transition: 'opacity 0.2s' }} onMouseEnter={e => e.currentTarget.style.opacity = 1} onMouseLeave={e => e.currentTarget.style.opacity = 0.9}>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
             Follow on Instagram
           </a>
