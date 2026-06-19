@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const LINKS = [
-  { to: '/home',    label: 'Home' },
+  { to: '/',        label: 'Home' },
   { to: '/rooms',   label: 'Rooms' },
   { to: '/gallery', label: 'Gallery' },
   { to: '/about',   label: 'About' },
@@ -12,7 +12,7 @@ const LINKS = [
 export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
-  const active = (to) => to === '/home' ? pathname === '/home' : pathname.startsWith(to);
+  const active = (to) => to === '/' ? pathname === '/' : pathname.startsWith(to);
 
   const linkStyle = (to) => ({
     padding: '0.45rem 0.9rem', borderRadius: 8, fontSize: '0.88rem', fontWeight: 500,
@@ -40,7 +40,7 @@ export default function Navbar() {
       <div className="container" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', height: 68 }}>
 
         {/* Logo */}
-        <Link to="/home" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
+        <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '0.65rem', textDecoration: 'none' }}>
           <div style={{ width: 48, height: 48, borderRadius: '50%', background: 'linear-gradient(135deg,#FFD700,#FFA500)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, boxShadow: '0 2px 10px rgba(232,82,10,0.25)', overflow: 'hidden', padding: 2 }}>
             <img src="/images/logo_harom.webp" alt="Har Om" style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} />
           </div>

@@ -9,6 +9,10 @@ const Token = require('../models/Token');
 const { verifyAdminToken } = require('../middleware/verifyAdminToken');
 const { adminLoginLimiter } = require('../middleware/rateLimiter');
 
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 const router = express.Router();
 
 // ── POST /admin/login ──
@@ -160,7 +164,8 @@ router.get('/tokens', verifyAdminToken, async (req, res) => {
   if (status && status !== 'ALL') filter.status = status;
   if (paymentMethod && paymentMethod !== 'ALL') filter.paymentMethod = paymentMethod;
   if (search) {
-    const searchRegex = new RegExp(search, 'i');
+    const escapedSearch = escapeRegExp(search.trim());
+    const searchRegex = new RegExp(escapedSearch, 'i');
     filter.$or = [
       { tokenNumber: searchRegex },
       { name: searchRegex },

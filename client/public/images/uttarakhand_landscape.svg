@@ -1,0 +1,212 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 900" width="100%" height="100%" preserveAspectRatio="xMidYMid slice" id="uttarakhand-landscape-svg">
+  <defs>
+    <!-- Sky Sunrise Gradient -->
+    <linearGradient id="skyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF8" />
+      <stop offset="40%" stop-color="#FFF5E5" />
+      <stop offset="100%" stop-color="#F8F2E8" />
+    </linearGradient>
+
+    <!-- Golden Sun Glow -->
+    <radialGradient id="sunGlow" cx="50%" cy="40%" r="60%">
+      <stop offset="0%" stop-color="#FFD194" stop-opacity="0.65" />
+      <stop offset="40%" stop-color="#FF9933" stop-opacity="0.25" />
+      <stop offset="100%" stop-color="#F8F2E8" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Mountain Layer Gradients (Back to Front) -->
+    <!-- Far Peaks (Snow Caps) -->
+    <linearGradient id="farPeaksGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFDF8" />
+      <stop offset="50%" stop-color="#EADBC8" />
+      <stop offset="100%" stop-color="#DBC8B2" />
+    </linearGradient>
+
+    <!-- Mid Mountains (Sandstone Ridge) -->
+    <linearGradient id="midMtGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E5D3BD" />
+      <stop offset="100%" stop-color="#A89278" />
+    </linearGradient>
+
+    <!-- Near Gorge Cliffs -->
+    <linearGradient id="nearCliffLeftGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#8c735c" />
+      <stop offset="100%" stop-color="#4A3728" />
+    </linearGradient>
+    <linearGradient id="nearCliffRightGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#7a624b" />
+      <stop offset="100%" stop-color="#3b2b1e" />
+    </linearGradient>
+
+    <!-- Confluence Plateau -->
+    <linearGradient id="plateauGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#BCA892" />
+      <stop offset="100%" stop-color="#5C4736" />
+    </linearGradient>
+
+    <!-- River Gradients -->
+    <!-- Alaknanda: Pale Glacier Turquoise Blue -->
+    <linearGradient id="alaknandaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#A5F3FC" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#22D3EE" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#0891B2" stop-opacity="1" />
+    </linearGradient>
+
+    <!-- Mandakini: Vibrant Emerald Aqua -->
+    <linearGradient id="mandakiniGrad" x1="100%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#A7F3D0" stop-opacity="0.9" />
+      <stop offset="50%" stop-color="#34D399" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#059669" stop-opacity="1" />
+    </linearGradient>
+
+    <!-- Ganga: Merged Holy Deep Cyan-Blue -->
+    <linearGradient id="gangaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0EA5E9" />
+      <stop offset="100%" stop-color="#0369A1" />
+    </linearGradient>
+
+    <!-- Shimmer Filter for Confluence Glow -->
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="6" result="coloredBlur"/>
+      <feMerge>
+        <feMergeNode in="coloredBlur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Sky Base -->
+  <rect width="100%" height="900" fill="url(#skyGrad)" />
+
+  <!-- Morning Sunrise Sun Disk & Glow -->
+  <circle cx="720" cy="380" r="140" fill="url(#sunGlow)" />
+  <circle cx="720" cy="380" r="45" fill="#FFFDF8" opacity="0.9" />
+
+  <!-- Floating Clouds (Far Background) -->
+  <g opacity="0.5" fill="#FFFDF8">
+    <path d="M 150 250 Q 180 230 210 250 Q 240 230 270 250 Q 290 260 270 280 L 150 280 Z" />
+    <path d="M 1120 220 Q 1150 200 1180 220 Q 1210 200 1240 220 Q 1260 230 1240 250 L 1120 250 Z" />
+  </g>
+
+  <!-- ==================== LAYER 1: FAR HIMALAYAN PEAKS ==================== -->
+  <g id="far-peaks">
+    <!-- Peak Left (Trishul style) -->
+    <path d="M 0 450 L 180 280 L 360 480 Z" fill="url(#farPeaksGrad)" opacity="0.85" />
+    <path d="M 180 280 L 210 320 L 170 360 L 190 400 L 140 450 Z" fill="#FFFDF8" opacity="0.9" /> <!-- Snow Ridge Left -->
+
+    <!-- Peak Center-Left (Nanda Devi style) -->
+    <path d="M 220 500 L 450 180 L 680 500 Z" fill="url(#farPeaksGrad)" />
+    <!-- Snow Cap -->
+    <path d="M 450 180 L 490 240 L 430 280 L 460 320 L 380 400 L 330 330 Z" fill="#FFFDF8" />
+
+    <!-- Peak Center-Right (Kedarnath Dome style) -->
+    <path d="M 600 520 L 900 150 L 1150 520 Z" fill="url(#farPeaksGrad)" />
+    <!-- Snow Cap -->
+    <path d="M 900 150 L 960 240 L 890 280 L 920 340 L 820 400 Z" fill="#FFFDF8" />
+
+    <!-- Peak Right (Panchachuli style) -->
+    <path d="M 1000 550 L 1220 260 L 1440 550 Z" fill="url(#farPeaksGrad)" opacity="0.85" />
+    <path d="M 1220 260 L 1260 310 L 1210 360 L 1240 410 L 1150 510 Z" fill="#FFFDF8" opacity="0.9" />
+  </g>
+
+  <!-- ==================== LAYER 2: MID-RANGE WOODED RIDGES ==================== -->
+  <g id="mid-mountains">
+    <!-- Left Ridge -->
+    <path d="M -50 600 L 300 420 L 600 580 L 800 520 L 950 620 L 950 900 L -50 900 Z" fill="url(#midMtGrad)" opacity="0.9" />
+    <!-- Soft ridge line highlight -->
+    <path d="M -50 600 Q 150 500 300 420 Q 450 500 600 580" fill="none" stroke="#FFF5E5" stroke-width="1.5" opacity="0.4" />
+
+    <!-- Right Ridge -->
+    <path d="M 500 650 L 750 480 L 1050 380 L 1490 580 L 1490 900 L 500 900 Z" fill="url(#midMtGrad)" opacity="0.9" />
+    <path d="M 750 480 Q 900 430 1050 380 Q 1270 480 1490 580" fill="none" stroke="#FFF5E5" stroke-width="1.5" opacity="0.4" />
+  </g>
+
+  <!-- Floating Clouds (Midground) -->
+  <g opacity="0.4" fill="#FFFDF8">
+    <path d="M 400 480 Q 430 465 460 480 Q 490 465 520 480 L 400 480 Z" />
+    <path d="M 850 450 Q 880 435 910 450 Q 940 435 970 450 L 850 450 Z" />
+  </g>
+
+  <!-- ==================== LAYER 3: CONFLUENCE CANYON & CLIFFS ==================== -->
+  <!-- Left Canyon Wall (Alaknanda Gorge) -->
+  <path d="M -20 750 Q 180 650 380 580 L 480 650 L 540 900 L -20 900 Z" fill="url(#nearCliffLeftGrad)" />
+  <path d="M -20 750 Q 180 650 380 580" fill="none" stroke="#EADBC8" stroke-width="2" opacity="0.35" />
+
+  <!-- Right Canyon Wall (Mandakini Gorge) -->
+  <path d="M 1460 720 Q 1220 620 1020 560 L 920 640 L 880 900 L 1460 900 Z" fill="url(#nearCliffRightGrad)" />
+  <path d="M 1460 720 Q 1220 620 1020 560" fill="none" stroke="#EADBC8" stroke-width="2" opacity="0.35" />
+
+  <!-- Confluence Cliff / Central Spur (Rudraprayag Sangam point) -->
+  <path d="M 640 680 L 720 590 L 780 680 L 760 900 L 620 900 Z" fill="url(#plateauGrad)" />
+  <path d="M 640 680 L 720 590 L 780 680" fill="none" stroke="#FFFDF8" stroke-width="2" opacity="0.5" />
+
+  <!-- Little Temple Outline on the Sangam Cliff (Spiritual Focal Point) -->
+  <g transform="translate(705, 532)" fill="#4A3728" stroke="#FFFDF8" stroke-width="1.2">
+    <!-- Temple Platform -->
+    <rect x="0" y="50" width="30" height="8" rx="2" fill="#E67E22" />
+    <!-- Temple Base -->
+    <rect x="5" y="32" width="20" height="18" fill="#4A3728" />
+    <!-- Inner Sanctum Door -->
+    <rect x="11" y="40" width="8" height="10" rx="1" fill="#FFF5E5" stroke="none" />
+    <!-- Shikhar (Spire Structure) -->
+    <path d="M 5 32 L 15 2 L 25 32 Z" fill="#E67E22" />
+    <!-- Amalaka & Kalash -->
+    <circle cx="15" cy="-1" r="3" fill="#FF9933" />
+    <line x1="15" y1="-4" x2="15" y2="-10" stroke="#FF9933" stroke-width="1.5" />
+    <!-- Orange Flag (Saffron Pataka) -->
+    <path d="M 15 -10 L 27 -6 L 15 -2 Z" fill="#FF9933" stroke="none" />
+  </g>
+
+
+  <!-- ==================== LAYER 4: THE SACRED RIVERS FLOWING & MERGING ==================== -->
+  
+  <!-- ALAKNANDA RIVER (Flowing from Left Gorge around the base) -->
+  <!-- Gradient stroke path that starts small in the background and widens -->
+  <path d="M 380 580 Q 480 680 550 710 Q 620 730 700 710" 
+        fill="none" stroke="url(#alaknandaGrad)" stroke-width="15" stroke-linecap="round" id="alaknanda-river" />
+  <path d="M 380 580 Q 480 680 550 710 Q 620 730 700 710" 
+        fill="none" stroke="#FFF" stroke-width="2" stroke-dasharray="10 15" opacity="0.6" />
+
+  <!-- MANDAKINI RIVER (Flowing from Right Gorge around the base) -->
+  <path d="M 1020 560 Q 920 660 850 690 Q 780 720 700 710" 
+        fill="none" stroke="url(#mandakiniGrad)" stroke-width="14" stroke-linecap="round" id="mandakini-river" />
+  <path d="M 1020 560 Q 920 660 850 690 Q 780 720 700 710" 
+        fill="none" stroke="#FFF" stroke-width="2" stroke-dasharray="8 20" opacity="0.6" />
+
+  <!-- THE RUDRAPRAYAG SANGAM (Glow Point where the rivers merge) -->
+  <!-- A subtle overlay glow centered at (700, 710) -->
+  <circle cx="700" cy="710" r="30" fill="#FFF5E5" opacity="0.5" filter="url(#glow)" />
+  <circle cx="700" cy="710" r="12" fill="#FFFDF8" opacity="0.9" filter="url(#glow)" />
+
+  <!-- GANGA RIVER (The combined flow winding down to the bottom center) -->
+  <!-- Starts at the confluence (700, 710) and flows down, getting wider -->
+  <path d="M 700 710 Q 680 760 730 810 T 710 920" 
+        fill="none" stroke="url(#gangaGrad)" stroke-width="28" stroke-linecap="round" />
+  <!-- Inner river details representing turbulence and holy foam -->
+  <path d="M 700 710 Q 680 760 730 810 T 710 920" 
+        fill="none" stroke="#FFF" stroke-width="4" stroke-dasharray="15 30" opacity="0.4" />
+  <path d="M 698 718 Q 675 765 725 812 T 705 918" 
+        fill="none" stroke="#A5F3FC" stroke-width="2.5" stroke-dasharray="5 15" opacity="0.5" />
+
+  <!-- ==================== LAYER 5: FOREGROUND CORNERS (Pine Silhouettes) ==================== -->
+  <g fill="#4A3728" opacity="0.95">
+    <!-- Left Pine Silhouette -->
+    <path d="M 10 910 L 80 760 L 150 910 Z" />
+    <path d="M 20 830 L 75 720 L 130 830 Z" />
+    <path d="M 30 750 L 70 680 L 110 750 Z" />
+    <rect x="65" y="900" width="10" height="20" />
+
+    <!-- Right Pine Silhouette -->
+    <path d="M 1290 910 L 1350 780 L 1410 910 Z" />
+    <path d="M 1310 820 L 1355 710 L 1400 820 Z" />
+    <rect x="1345" y="900" width="10" height="20" />
+  </g>
+
+  <!-- Birds in the Sky -->
+  <g stroke="#4A3728" stroke-width="1.5" fill="none" opacity="0.6">
+    <path d="M 250 150 Q 255 142 260 150 Q 265 142 270 150" />
+    <path d="M 280 160 Q 283 154 286 160 Q 289 154 292 160" />
+    <path d="M 310 145 Q 315 138 320 145 Q 325 138 330 145" />
+    <path d="M 980 120 Q 985 112 990 120 Q 995 112 1000 120" />
+  </g>
+</svg>

@@ -233,7 +233,7 @@ Hari Om — हरि ॐ
             </button>
           </div>
 
-          <Link to="/home">
+          <Link to="/">
             <button className="btn-bhagwa px-10">🏠 Back to Home</button>
           </Link>
         </div>

@@ -2,8 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-route
 import { lazy, Suspense, useEffect } from 'react';
 import HomePage from './pages/HomePage';
 
-const GangaLandingPage = lazy(() => import('./pages/GangaLandingPage'));
-
 // Lazy-loaded pages — each becomes its own JS chunk, loaded on-demand
 const RoomsPage = lazy(() => import('./pages/RoomsPage'));
 const RoomDetailPage = lazy(() => import('./pages/RoomDetailPage'));
@@ -43,8 +41,8 @@ export default function App() {
       <ScrollToTop />
       <Suspense fallback={<PageLoader />}>
         <Routes>
-          <Route path="/"                                element={<GangaLandingPage />} />
-          <Route path="/home"                            element={<HomePage />} />
+          <Route path="/"                                element={<HomePage />} />
+          <Route path="/home"                            element={<Navigate to="/" replace />} />
           <Route path="/rooms"                           element={<RoomsPage />} />
           <Route path="/rooms/:roomId"                   element={<RoomDetailPage />} />
           <Route path="/gallery"                         element={<GalleryPage />} />

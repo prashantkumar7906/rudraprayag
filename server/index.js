@@ -33,7 +33,7 @@ const allowedOrigins = [
 app.use(cors({
   origin: (origin, callback) => {
     if (!origin || allowedOrigins.includes(origin)) return callback(null, true);
-    if (origin.endsWith('.vercel.app') || /^https:\/\/[a-zA-Z0-9-]+\.vercel\.app$/.test(origin)) {
+    if (origin && /^https:\/\/(rudraprayag|dharamshala)[a-zA-Z0-9-]*\.vercel\.app$/.test(origin)) {
       return callback(null, true);
     }
     callback(new Error(`CORS: origin ${origin} not allowed`));

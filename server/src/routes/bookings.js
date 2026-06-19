@@ -198,9 +198,15 @@ router.post('/initiate',
 router.post('/webhook',
   express.raw({ type: 'application/json' }),
   async (req, res) => {
+    const webhookSecret = process.env.RAZORPAY_WEBHOOK_SECRET;
+    if (!webhookSecret) {
+      console.error('[Webhook] RAZORPAY_WEBHOOK_SECRET is not configured.');
+      return res.status(500).json({ error: 'Webhook secret not configured.' });
+    }
+
     const sig = req.headers['x-razorpay-signature'];
     const expected = crypto
-      .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
+      .createHmac('sha256', webhookSecret)
       .update(req.body)
       .digest('hex');
 
