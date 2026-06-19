@@ -33,7 +33,11 @@ export default function HomePage() {
               <div className="fade-in-up">
                 {/* Location badge */}
                 <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', padding: '0.35rem 0.9rem', borderRadius: 999, border: '1.5px solid #E8520A', background: '#FDF6EE', fontSize: '0.72rem', fontWeight: 700, color: '#E8520A', fontFamily: 'Inter, sans-serif', letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: '1.5rem' }}>
-                  📍 Sangam · Rudraprayag, Uttarakhand
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#E8520A' }}>
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                    <circle cx="12" cy="10" r="3" />
+                  </svg>
+                  Sangam · Rudraprayag, Uttarakhand
                 </div>
 
                 {/* H1 dark */}
@@ -58,14 +62,30 @@ export default function HomePage() {
                 {/* CTAs */}
                 <div style={{ display: 'flex', gap: '0.85rem', flexWrap: 'wrap', marginBottom: '2.5rem' }}>
                   <Link to="/rooms"><button className="btn-primary" style={{ fontSize: '0.92rem', padding: '0.75rem 1.6rem' }}>Book a Stay / प्रवास बुक करें →</button></Link>
-                  <Link to="/donate"><button className="btn-outline" style={{ fontSize: '0.92rem', padding: '0.75rem 1.6rem' }}>♡ Offer Seva / सेवा दान</button></Link>
+                  <Link to="/donate">
+                    <button className="btn-outline" style={{ fontSize: '0.92rem', padding: '0.75rem 1.6rem', display: 'inline-flex', alignItems: 'center', gap: '0.35rem' }}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ color: '#E8520A' }}>
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                      </svg>
+                      Offer Seva / सेवा दान
+                    </button>
+                  </Link>
                 </div>
 
                 {/* Stats */}
                 <div style={{ display: 'flex', gap: '2.2rem', flexWrap: 'wrap' }}>
                   {[['18+','Years of seva'],['2.4k','Pilgrims hosted'],['4.8★','Guest rating']].map(([v,l]) => (
                     <div key={l}>
-                      <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 700, color: '#1A0A00', lineHeight: 1 }}>{v}</div>
+                      <div style={{ fontFamily: 'Playfair Display, serif', fontSize: '1.6rem', fontWeight: 700, color: '#1A0A00', lineHeight: 1, display: 'inline-flex', alignItems: 'center', gap: '0.2rem' }}>
+                        {v.endsWith('★') ? (
+                          <>
+                            {v.slice(0, -1)}
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="#E8520A" stroke="#E8520A" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ transform: 'translateY(-1px)' }}>
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                            </svg>
+                          </>
+                        ) : v}
+                      </div>
                       <div style={{ fontSize: '0.77rem', color: '#C4581A', marginTop: '0.2rem', fontFamily: 'Inter, sans-serif' }}>{l}</div>
                     </div>
                   ))}
