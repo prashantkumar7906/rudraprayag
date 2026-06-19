@@ -17,6 +17,17 @@ export default function Navbar() {
   const [currentLang, setCurrentLang] = useState(localStorage.getItem('lang') || 'en');
   const [isTranslating, setIsTranslating] = useState(false);
 
+  const clearGoogleTranslateCookie = () => {
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + window.location.hostname + ";";
+    
+    const hostParts = window.location.hostname.split('.');
+    if (hostParts.length > 2) {
+      const apexDomain = '.' + hostParts.slice(-2).join('.');
+      document.cookie = "googtrans=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=" + apexDomain + ";";
+    }
+  };
+
   // Monitor route changes to instantly apply translation on navigation
   useEffect(() => {
     const savedLang = localStorage.getItem('lang');
@@ -35,12 +46,18 @@ export default function Navbar() {
         }
       };
       checkAndApply();
+    } else {
+      clearGoogleTranslateCookie();
     }
   }, [pathname]);
 
   const toggleLanguage = () => {
     const nextLang = currentLang === 'en' ? 'hi' : 'en';
     setIsTranslating(true);
+    
+    if (nextLang === 'en') {
+      clearGoogleTranslateCookie();
+    }
     
     const applyToggle = () => {
       const selectEl = document.querySelector('.goog-te-combo');
