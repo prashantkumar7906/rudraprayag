@@ -15,41 +15,83 @@ export default function Navbar() {
   const active = (to) => to === '/' ? pathname === '/' : pathname.startsWith(to);
 
   const [currentLang, setCurrentLang] = useState(localStorage.getItem('lang') || 'en');
+  const [isTranslating, setIsTranslating] = useState(false);
 
+  // Monitor route changes to instantly apply translation on navigation
   useEffect(() => {
     const savedLang = localStorage.getItem('lang');
     if (savedLang === 'hi') {
+      let attempts = 0;
       const checkAndApply = () => {
         const selectEl = document.querySelector('.goog-te-combo');
         if (selectEl) {
-          selectEl.value = 'hi';
-          selectEl.dispatchEvent(new Event('change'));
-        } else {
+          if (selectEl.value !== 'hi') {
+            selectEl.value = 'hi';
+            selectEl.dispatchEvent(new Event('change'));
+          }
+        } else if (attempts < 30) { // check up to 6 seconds
+          attempts++;
           setTimeout(checkAndApply, 200);
         }
       };
       checkAndApply();
     }
-  }, []);
+  }, [pathname]);
 
   const toggleLanguage = () => {
     const nextLang = currentLang === 'en' ? 'hi' : 'en';
-    setCurrentLang(nextLang);
-    localStorage.setItem('lang', nextLang);
+    setIsTranslating(true);
     
-    const selectEl = document.querySelector('.goog-te-combo');
-    if (selectEl) {
-      selectEl.value = nextLang === 'hi' ? 'hi' : '';
-      selectEl.dispatchEvent(new Event('change'));
-    } else {
-      setTimeout(() => {
-        const retryEl = document.querySelector('.goog-te-combo');
-        if (retryEl) {
-          retryEl.value = nextLang === 'hi' ? 'hi' : '';
-          retryEl.dispatchEvent(new Event('change'));
-        }
-      }, 500);
-    }
+    const applyToggle = () => {
+      const selectEl = document.querySelector('.goog-te-combo');
+      if (selectEl) {
+        selectEl.value = nextLang === 'hi' ? 'hi' : '';
+        selectEl.dispatchEvent(new Event('change'));
+        
+        setCurrentLang(nextLang);
+        localStorage.setItem('lang', nextLang);
+        
+        // Wait briefly for translation engine to kick in before clearing loader
+        setTimeout(() => {
+          setIsTranslating(false);
+          // If turning off Hindi, reload the page to completely reset mutated text nodes
+          // and prevent React reconciliation errors or stuck UI
+          if (nextLang === 'en') {
+            window.location.reload();
+          }
+        }, 800);
+      } else {
+        // If Google Translate combo box is not yet initialized in DOM, poll for it
+        let attempts = 0;
+        const pollCombo = setInterval(() => {
+          const retryEl = document.querySelector('.goog-te-combo');
+          attempts++;
+          if (retryEl) {
+            clearInterval(pollCombo);
+            retryEl.value = nextLang === 'hi' ? 'hi' : '';
+            retryEl.dispatchEvent(new Event('change'));
+            setCurrentLang(nextLang);
+            localStorage.setItem('lang', nextLang);
+            setTimeout(() => {
+              setIsTranslating(false);
+              if (nextLang === 'en') {
+                window.location.reload();
+              }
+            }, 800);
+          } else if (attempts > 20) { // 4 seconds timeout fallback
+            clearInterval(pollCombo);
+            setIsTranslating(false);
+            setCurrentLang(nextLang);
+            localStorage.setItem('lang', nextLang);
+            if (nextLang === 'en') {
+              window.location.reload();
+            }
+          }
+        }, 200);
+      }
+    };
+
+    applyToggle();
   };
 
   const linkStyle = (to) => ({
@@ -94,7 +136,8 @@ export default function Navbar() {
           
           <button
             onClick={toggleLanguage}
-            className="btn-outline"
+            className="btn-outline notranslate"
+            disabled={isTranslating}
             style={{
               marginLeft: '0.6rem',
               fontSize: '0.82rem',
@@ -109,10 +152,18 @@ export default function Navbar() {
               minHeight: '38px',
               height: '38px',
               borderRadius: '8px',
-              cursor: 'pointer'
+              cursor: isTranslating ? 'not-allowed' : 'pointer',
+              opacity: isTranslating ? 0.7 : 1
             }}
           >
-            🌐 {currentLang === 'en' ? 'हिन्दी' : 'English'}
+            {isTranslating ? (
+              <>
+                <span className="spinner" style={{ borderColor: 'rgba(232,82,10,0.2)', borderTopColor: '#E8520A', width: 14, height: 14, marginRight: '0.2rem' }}></span>
+                {currentLang === 'en' ? 'अनुवाद...' : 'Restoring...'}
+              </>
+            ) : (
+              <>🌐 {currentLang === 'en' ? 'हिन्दी' : 'English'}</>
+            )}
           </button>
 
           <Link to="/rooms" style={{ marginLeft: '0.6rem', textDecoration: 'none' }}>
@@ -145,7 +196,8 @@ export default function Navbar() {
           
           <button
             onClick={() => { toggleLanguage(); setOpen(false); }}
-            className="btn-outline"
+            className="btn-outline notranslate"
+            disabled={isTranslating}
             style={{
               width: '100%',
               marginTop: '0.6rem',
@@ -160,10 +212,18 @@ export default function Navbar() {
               alignItems: 'center',
               justifyContent: 'center',
               gap: '0.4rem',
-              cursor: 'pointer'
+              cursor: isTranslating ? 'not-allowed' : 'pointer',
+              opacity: isTranslating ? 0.7 : 1
             }}
           >
-            🌐 {currentLang === 'en' ? 'हिन्दी (Hindi)' : 'English (अंग्रेजी)'}
+            {isTranslating ? (
+              <>
+                <span className="spinner" style={{ borderColor: 'rgba(232,82,10,0.2)', borderTopColor: '#E8520A', width: 14, height: 14, marginRight: '0.2rem' }}></span>
+                {currentLang === 'en' ? 'अनुवाद...' : 'Restoring...'}
+              </>
+            ) : (
+              <>🌐 {currentLang === 'en' ? 'हिन्दी (Hindi)' : 'English (अंग्रेजी)'}</>
+            )}
           </button>
         </div>
       )}
