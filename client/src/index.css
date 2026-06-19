@@ -313,3 +313,22 @@ a { text-decoration: none; }
 .animate-spin-hover:hover {
   animation: spin 2s linear infinite;
 }
+
+/* Hide Google Translate original top bar and widget */
+body {
+  top: 0 !important;
+  position: static !important;
+}
+.skiptranslate, .goog-te-banner-frame, iframe.goog-te-banner-frame, .goog-te-banner {
+  display: none !important;
+  visibility: hidden !important;
+}
+#google_translate_element {
+  display: none !important;
+}
+.goog-te-balloon-frame {
+  display: none !important;
+}
+.goog-tooltip, .goog-tooltip:hover {
+  display: none !important;
+}

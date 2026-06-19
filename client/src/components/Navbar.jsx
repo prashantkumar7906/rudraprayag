@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
 const LINKS = [
@@ -13,6 +13,44 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const { pathname } = useLocation();
   const active = (to) => to === '/' ? pathname === '/' : pathname.startsWith(to);
+
+  const [currentLang, setCurrentLang] = useState(localStorage.getItem('lang') || 'en');
+
+  useEffect(() => {
+    const savedLang = localStorage.getItem('lang');
+    if (savedLang === 'hi') {
+      const checkAndApply = () => {
+        const selectEl = document.querySelector('.goog-te-combo');
+        if (selectEl) {
+          selectEl.value = 'hi';
+          selectEl.dispatchEvent(new Event('change'));
+        } else {
+          setTimeout(checkAndApply, 200);
+        }
+      };
+      checkAndApply();
+    }
+  }, []);
+
+  const toggleLanguage = () => {
+    const nextLang = currentLang === 'en' ? 'hi' : 'en';
+    setCurrentLang(nextLang);
+    localStorage.setItem('lang', nextLang);
+    
+    const selectEl = document.querySelector('.goog-te-combo');
+    if (selectEl) {
+      selectEl.value = nextLang === 'hi' ? 'hi' : '';
+      selectEl.dispatchEvent(new Event('change'));
+    } else {
+      setTimeout(() => {
+        const retryEl = document.querySelector('.goog-te-combo');
+        if (retryEl) {
+          retryEl.value = nextLang === 'hi' ? 'hi' : '';
+          retryEl.dispatchEvent(new Event('change'));
+        }
+      }, 500);
+    }
+  };
 
   const linkStyle = (to) => ({
     padding: '0.45rem 0.9rem', borderRadius: 8, fontSize: '0.88rem', fontWeight: 500,
@@ -53,6 +91,30 @@ export default function Navbar() {
         {/* Desktop */}
         <div className="hidden md:flex" style={{ alignItems: 'center', gap: '0.1rem' }}>
           {LINKS.map(({ to, label }) => <Link key={to} to={to} style={linkStyle(to)}>{label}</Link>)}
+          
+          <button
+            onClick={toggleLanguage}
+            className="btn-outline"
+            style={{
+              marginLeft: '0.6rem',
+              fontSize: '0.82rem',
+              padding: '0.55rem 1rem',
+              borderColor: '#E8520A',
+              color: '#E8520A',
+              fontWeight: 600,
+              fontFamily: currentLang === 'en' ? 'Noto Sans Devanagari, sans-serif' : 'Inter, sans-serif',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '0.35rem',
+              minHeight: '38px',
+              height: '38px',
+              borderRadius: '8px',
+              cursor: 'pointer'
+            }}
+          >
+            🌐 {currentLang === 'en' ? 'हिन्दी' : 'English'}
+          </button>
+
           <Link to="/rooms" style={{ marginLeft: '0.6rem', textDecoration: 'none' }}>
             <button className="btn-primary" style={{ fontSize: '0.82rem', padding: '0.55rem 1.2rem' }}>
               Book Now&nbsp;<span style={{ fontFamily: 'Noto Sans Devanagari, sans-serif', fontSize: '0.76rem', opacity: 0.9 }}>/ अभी बुक करें</span>
@@ -80,6 +142,29 @@ export default function Navbar() {
           <Link to="/rooms" onClick={() => setOpen(false)} style={{ textDecoration: 'none' }}>
             <button className="btn-primary" style={{ width: '100%', marginTop: '0.9rem' }}>Book Now / अभी बुक करें</button>
           </Link>
+          
+          <button
+            onClick={() => { toggleLanguage(); setOpen(false); }}
+            className="btn-outline"
+            style={{
+              width: '100%',
+              marginTop: '0.6rem',
+              fontFamily: currentLang === 'en' ? 'Noto Sans Devanagari, sans-serif' : 'Inter, sans-serif',
+              fontWeight: 600,
+              fontSize: '0.9rem',
+              borderColor: '#E8520A',
+              color: '#E8520A',
+              minHeight: '44px',
+              borderRadius: '8px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '0.4rem',
+              cursor: 'pointer'
+            }}
+          >
+            🌐 {currentLang === 'en' ? 'हिन्दी (Hindi)' : 'English (अंग्रेजी)'}
+          </button>
         </div>
       )}
     </nav>
