@@ -284,7 +284,7 @@ async function confirmBooking(payment) {
 router.get('/:bookingId', async (req, res) => {
   try {
     const booking = await Booking.findOne({ bookingId: req.params.bookingId })
-      .select('-__v');
+      .select('-__v -idNumber -idType -guestPhone');
     if (!booking) return res.status(404).json({ error: 'Booking not found.' });
 
     const token = await Token.findOne({ bookingId: booking._id }).select('-__v');

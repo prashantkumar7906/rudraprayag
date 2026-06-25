@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { encrypt, decrypt } = require('../utils/encryption');
 
 const bookingSchema = new mongoose.Schema({
   bookingId: { type: String, unique: true, required: true },
@@ -13,7 +14,12 @@ const bookingSchema = new mongoose.Schema({
   guestPhone: { type: String, required: true },
   citizenship: { type: String, enum: ['Indian', 'Foreigner'], required: true, default: 'Indian' },
   idType: { type: String, required: true },
-  idNumber: { type: String, required: true },
+  idNumber: { 
+    type: String, 
+    required: true,
+    set: encrypt,
+    get: decrypt
+  },
   specialRequests: { type: String, default: '' },
   priceBreakdown: {
     baseAmount: { type: Number, required: true },
@@ -35,6 +41,11 @@ const bookingSchema = new mongoose.Schema({
   cancellationReason: { type: String },
   cancelledAt: { type: Date },
   emailSentAt: { type: Date },
-}, { timestamps: true });
+}, { 
+  timestamps: true,
+  toJSON: { getters: true },
+  toObject: { getters: true }
+});
 
 module.exports = mongoose.model('Booking', bookingSchema);
+

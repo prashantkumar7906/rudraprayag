@@ -131,9 +131,11 @@ async function initDb() {
     const adminCount = await Admin.countDocuments();
     if (adminCount === 0) {
       const bcrypt = require('bcryptjs');
-      const passwordHash = await bcrypt.hash('Password@rudrprayad', 10);
-      await Admin.create({ email: 'owner@dharamshala.com', passwordHash });
-      console.log('[DB] ✅ Default admin seeded.');
+      const email = process.env.ADMIN_EMAIL || 'owner@dharamshala.com';
+      const password = process.env.DEFAULT_ADMIN_PASSWORD || 'Password@rudrprayad';
+      const passwordHash = await bcrypt.hash(password, 10);
+      await Admin.create({ email: email.toLowerCase(), passwordHash });
+      console.log(`[DB] ✅ Default admin seeded (${email})`);
     }
 
     // Dynamic database migration: upgrade inventory for all existing rooms
